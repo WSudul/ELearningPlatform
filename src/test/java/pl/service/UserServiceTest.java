@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,8 +19,12 @@ import pl.repository.UserRoleRepository;
 import pl.service.config.TestConfig;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.beans.BeanUtils.copyProperties;
 
 
@@ -33,6 +38,7 @@ public class UserServiceTest {
     private UserRole expectedUserRoleDefault;
     private UserRole expectedUserRoleTeacher;
     private User newValidUser;
+    private User existingUser;
     @MockBean
     private UserRepository userRepository;
     @MockBean
@@ -58,11 +64,23 @@ public class UserServiceTest {
         newValidUser.setFirstName("Joe");
         newValidUser.setLastName("Kavinsky");
         newValidUser.setPassword("samplepass123");
+        newValidUser.setActive(true);
+
+        existingUser = new User();
+        existingUser.setEmail("test@test.com");
+        existingUser.setFirstName("Joe");
+        existingUser.setLastName("Kavinsky");
+        existingUser.setPassword("samplepass123");
+        existingUser.setId(123L);
+        existingUser.setRoles(Stream.of(expectedUserRoleDefault).collect(Collectors.toSet()));
+        existingUser.setActive(true);
 
     }
 
     @After
     public void tearDown() throws Exception {
+        verifyNoMoreInteractions(userRepository);
+        verifyNoMoreInteractions(userRoleRepository);
     }
 
     @Test
@@ -75,7 +93,8 @@ public class UserServiceTest {
         given(this.userRepository.save(newUser)).willReturn(newUser);
 
         Assert.isTrue(this.userService.addWithDefaultRole(newUser), "New user should be added");
-
+        Mockito.verify(userRoleRepository, Mockito.times(1)).findByRole(DEFAULT_ROLE);
+        Mockito.verify(userRepository, Mockito.times(1)).save(newUser);
     }
 
     @Test
@@ -89,6 +108,8 @@ public class UserServiceTest {
                 .willThrow(new DataIntegrityViolationException("Exception description"));
 
         Assert.isTrue(!this.userService.addWithDefaultRole(newUser), "New user should not be added");
+        Mockito.verify(userRoleRepository, Mockito.times(1)).findByRole(DEFAULT_ROLE);
+        Mockito.verify(userRepository, Mockito.times(1)).save(newUser);
 
     }
 
@@ -97,7 +118,33 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deleteUser() throws Exception {
+    public void shouldDeactivateUser() throws Exception {
+        User updatedUser = new User();
+        copyProperties(existingUser, updatedUser);
+        updatedUser.setActive(false);
+
+        Optional<User> expectedExistingUser = Optional.ofNullable(existingUser);
+        given(this.userRepository.findById(existingUser.getId()))
+                .willReturn(expectedExistingUser);
+        given(this.userRepository.save(updatedUser)).willReturn(updatedUser);
+
+        Assert.isTrue(this.userService.deactivateUser(existingUser.getId()), "User should be deactivated");
+        Mockito.verify(userRepository, Mockito.times(1)).findById(existingUser.getId());
+        Mockito.verify(userRepository, Mockito.times(1)).save(updatedUser);
+    }
+
+    @Test
+    public void ShouldNotDeactivateNotExistingUser() throws Exception {
+        final Long incorrectId = 9999L;
+
+        Optional<User> emptyResult = Optional.empty();
+        given(this.userRepository.findById(incorrectId))
+                .willReturn(emptyResult);
+
+        Assert.isTrue(!this.userService.deactivateUser(incorrectId), "Not existing user should not be deactivated");
+        Mockito.verify(userRepository, Mockito.times(1)).findById(incorrectId);
+        Mockito.verify(userRepository, never()).save(Mockito.any(User.class));
+
     }
 
 

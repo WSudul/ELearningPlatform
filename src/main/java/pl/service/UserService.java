@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    //#TODO: roles as enums via @Enumerated
     private static final String DEFAULT_ROLE = "ROLE_USER";
     private static final String TEACHER_ROLE = "ROLE_TEACHER";
     @Autowired
@@ -48,12 +47,13 @@ public class UserService {
 
     }
 
-    public boolean deleteUser(Long idUser) {
+    public boolean deactivateUser(Long idUser) {
         try {
             Optional<User> user = userRepository.findById(idUser);
-            if (user.isPresent())
-                userRepository.delete(user.get());
-            else {
+            if (user.isPresent()) {
+                user.get().setActive(false);
+                userRepository.save(user.get());
+            } else {
                 System.out.println("No user with exists with id:" + idUser);
                 return false;
             }
