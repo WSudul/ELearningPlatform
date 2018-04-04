@@ -93,10 +93,6 @@ public class UserServiceTest {
     }
 
     @Test
-    public void addWithTeacherRole() throws Exception {
-    }
-
-    @Test
     public void findUserByEmail() throws Exception {
     }
 

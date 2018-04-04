@@ -24,19 +24,13 @@ public class UserService {
         return addUser(user, DEFAULT_ROLE);
     }
 
-    public boolean addWithTeacherRole(User user) {
-        return addUser(user, TEACHER_ROLE);
-
-    }
 
     private boolean addUser(User user, final String role) {
         try {
             Optional<UserRole> userRole = roleRepository.findByRole(role);
             if (userRole.isPresent()) {
                 user.getRoles().add(userRole.get());
-                System.out.println("try to save\n");
                 userRepository.save(user);
-                System.out.println("after save");
             } else {
                 System.out.println("No such user role found for: " + role);
                 return false;
