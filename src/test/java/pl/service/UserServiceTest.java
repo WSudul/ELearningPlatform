@@ -114,7 +114,20 @@ public class UserServiceTest {
     }
 
     @Test
-    public void findUserByEmail() throws Exception {
+    public void findUserByEmailShouldReturnUser() throws Exception {
+        User foundUser = new User();
+        copyProperties(existingUser, foundUser);
+
+        Optional<User> expectedExistingUser = Optional.of(foundUser);
+        given(this.userRepository.findByEmail(foundUser.getEmail()))
+                .willReturn(expectedExistingUser);
+        Optional<User> returnedValue = this.userService.findUserByEmail(existingUser.getEmail());
+
+        Assert.notNull(returnedValue, "Returned user should not be null");
+        Assert.isTrue(returnedValue.equals(expectedExistingUser), "Returned user should be same as provided");
+
+        Mockito.verify(userRepository, Mockito.times(1)).findByEmail(existingUser.getEmail());
+
     }
 
     @Test
