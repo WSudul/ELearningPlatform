@@ -17,12 +17,15 @@
         <version>2.0.0.RELEASE</version>
     </parent>
 
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <org.springframework.test.version>5.0.4.RELEASE</org.springframework.test.version>
         <org.mockito-core.version>2.17.0</org.mockito-core.version>
         <java.version>9.0</java.version>
+        <maven.compiler.source>9.0</maven.compiler.source>
+        <maven.compiler.target>9.0</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -42,23 +45,28 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+        <!--To be enabled when H2 is replaced here-->
+        <!--<dependency>-->
+        <!--<groupId>mysql</groupId>-->
+        <!--<artifactId>mysql-connector-java</artifactId>-->
             <!--<scope>runtime</scope>-->
-        </dependency>
+        <!--</dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
         </dependency>
 
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 
         <dependency>
             <groupId>net.sourceforge.nekohtml</groupId>
             <artifactId>nekohtml</artifactId>
-            <version>1.9.21</version><!--$NO-MVN-MAN-VER$-->
+            <version>1.9.21</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -84,6 +92,13 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!--Prepare separate profile for tests ?-->
+        <!--<dependency>-->
+        <!--<groupId>com.h2database</groupId>-->
+        <!--<artifactId>h2</artifactId>-->
+        <!--<scope>test</scope>-->
+        <!--</dependency>-->
 
         <!-- JUNIT TEST -->
 

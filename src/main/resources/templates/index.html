@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <title>E-learning</title>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"></link>
+    <link rel="stylesheet" type="text/css" href="css/styles.css"></link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">E-learning</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a th:href="@{/register}">Rejestracja</a></li>
+                <li><a th:href="@{/login}">Logowanie</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- First Container -->
+<div class="container-fluid bg-1 text-center">
+    <h3 class="margin">E-learning nowe możliwości nauczania</h3>
+    <img th:src="@{/images/elearning-home.png}"
+         src="../images/elearning-home.png" class="img-responsive img-rounded margin" style="display:inline"
+         alt="E-learning" width="750" height="550"></img>
+</div>
+
+<!-- Second Container -->
+<div class="container-fluid bg-2 text-center">
+    <h3 class="margin">Czym jest e-learning?</h3>
+    <p>Jest to technika szkolenia wykorzystująca wszelkie dostępne media elektroniczne,
+        w szczególności Internet. E-learning umożliwia nam samodzielne wybranie preferowanego
+        formatu dostarczania wiedzy i tempa jej przekazywania. Sedno wyższości elearningu nad
+        innymi metodami polega na przeniesieniu środka ciężkości w nauczaniu z nauczyciela -
+        na osobę uczącą się. </p>
+    <a href="#" class="btn btn-default btn-lg">
+        <span class="glyphicon glyphicon-search"></span> Dowiedz się więcej
+    </a>
+</div>
+
+<!-- Third Container (Grid) -->
+<div class="container-fluid bg-3 text-center">
+    <h3 class="margin">Dostarczamy kursy z wielu dziedzin nauki</h3><br></br>
+    <div class="row">
+        <div class="col-sm-4">
+
+            <div class="text-image">
+                <h5>Nauki ścisłe</h5>
+                <p>Zbiorowość nauk, w której ściśle i dokładnie opisuje oraz modeluje się zjawiska, a także weryfikuje
+                    się hipotezy za pomocą doświadczeń i dowodów matematycznych.</p>
+            </div>
+            <img th:src="@{/images/nauki-scisle.jpg}"
+                 src="../images/nauki-scisle.jpg" class="img-responsive margin" style="width:100%;margin-top:30px"
+                 alt="Image"></img>
+        </div>
+        <div class="col-sm-4">
+            <div class="text-image">
+                <h5>Nauki humanistyczne</h5>
+                <p> Grupy nauk, których przedmiotem badań jest człowiek jako istota społeczna i jego twórczość</p>
+            </div>
+            <img th:src="@{/images/nauki-humanistyczne.jpg}"
+                 src="../images/nauki-humanistyczne.jpg" class="img-responsive margin"
+                 style="width:100%;margin-top:30px" alt="Image"></img>
+        </div>
+        <div class="col-sm-4">
+            <div class="text-image">
+                <h5>Nauki prawne</h5>
+                <p>Zbiór nauk społecznych zawierających elementy nauk humanistycznych i nauk ścisłych, zajmujących się
+                    prawem.</p>
+            </div>
+            <img th:src="@{/images/Nauki-prawne.jpg}"
+                 src="../images/Nauki-prawne.jpg" class="img-responsive margin" style="width:100%;margin-top:30px"
+                 alt="Image"></img>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="container-fluid bg-4 text-center">
+    <p>2018 Elearning platform</p>
+</footer>
+
+</body>
+</html>
