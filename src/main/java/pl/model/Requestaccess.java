@@ -1,40 +1,51 @@
 package pl.model;
 
-public class Requestaccess {
-    private Long idaccess;
-    private Long roleid;
-    private Long subjectid;
-    private Long userid;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-    public Long getIdaccess() {
+@Entity
+@Table(name = "requestacess")
+public class Requestaccess {
+
+    private long idaccess;
+    private long roleid;
+    private long subjectid;
+    private long userid;
+
+
+    public long getIdaccess() {
         return idaccess;
     }
 
-    public void setIdaccess(Long idaccess) {
+    public void setIdaccess(long idaccess) {
         this.idaccess = idaccess;
     }
 
-    public Long getRoleid() {
+
+    public long getRoleid() {
         return roleid;
     }
 
-    public void setRoleid(Long roleid) {
+    public void setRoleid(long roleid) {
         this.roleid = roleid;
     }
 
-    public Long getSubjectid() {
+
+    public long getSubjectid() {
         return subjectid;
     }
 
-    public void setSubjectid(Long subjectid) {
+    public void setSubjectid(long subjectid) {
         this.subjectid = subjectid;
     }
 
-    public Long getUserid() {
+
+    public long getUserid() {
         return userid;
     }
 
-    public void setUserid(Long userid) {
+    public void setUserid(long userid) {
         this.userid = userid;
     }
+
 }

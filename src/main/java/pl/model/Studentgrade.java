@@ -1,49 +1,61 @@
 package pl.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "studentgrade")
 public class Studentgrade {
-    private Long idstudentgrade;
-    private String comment;
-    private Double grade;
-    private Long userid;
-    private Long subject_id;
 
-    public Long getIdstudentgrade() {
-        return idstudentgrade;
-    }
+  private long idstudentgrade;
+  private String comment;
+  private double grade;
+  private long userid;
+  private long subjectId;
 
-    public void setIdstudentgrade(Long idstudentgrade) {
-        this.idstudentgrade = idstudentgrade;
-    }
 
-    public String getComment() {
-        return comment;
-    }
+  public long getIdstudentgrade() {
+    return idstudentgrade;
+  }
 
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+  public void setIdstudentgrade(long idstudentgrade) {
+    this.idstudentgrade = idstudentgrade;
+  }
 
-    public Double getGrade() {
-        return grade;
-    }
 
-    public void setGrade(Double grade) {
-        this.grade = grade;
-    }
+  public String getComment() {
+    return comment;
+  }
 
-    public Long getUserid() {
-        return userid;
-    }
+  public void setComment(String comment) {
+    this.comment = comment;
+  }
 
-    public void setUserid(Long userid) {
-        this.userid = userid;
-    }
 
-    public Long getSubject_id() {
-        return subject_id;
-    }
+  public double getGrade() {
+    return grade;
+  }
 
-    public void setSubject_id(Long subject_id) {
-        this.subject_id = subject_id;
-    }
+  public void setGrade(double grade) {
+    this.grade = grade;
+  }
+
+
+  public long getUserid() {
+    return userid;
+  }
+
+  public void setUserid(long userid) {
+    this.userid = userid;
+  }
+
+
+  public long getSubjectId() {
+    return subjectId;
+  }
+
+  public void setSubjectId(long subjectId) {
+    this.subjectId = subjectId;
+  }
+
 }

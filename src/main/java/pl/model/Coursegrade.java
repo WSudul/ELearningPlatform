@@ -1,40 +1,51 @@
 package pl.model;
 
-public class Coursegrade {
-    private Long idcoursegrade;
-    private Long grade;
-    private Long userid;
-    private Long subject_id;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-    public Long getIdcoursegrade() {
+@Entity
+@Table(name = "coursegrade")
+public class Coursegrade {
+
+    private long idcoursegrade;
+    private long grade;
+    private long userid;
+    private long subjectId;
+
+
+    public long getIdcoursegrade() {
         return idcoursegrade;
     }
 
-    public void setIdcoursegrade(Long idcoursegrade) {
+    public void setIdcoursegrade(long idcoursegrade) {
         this.idcoursegrade = idcoursegrade;
     }
 
-    public Long getGrade() {
+
+    public long getGrade() {
         return grade;
     }
 
-    public void setGrade(Long grade) {
+    public void setGrade(long grade) {
         this.grade = grade;
     }
 
-    public Long getUserid() {
+
+    public long getUserid() {
         return userid;
     }
 
-    public void setUserid(Long userid) {
+    public void setUserid(long userid) {
         this.userid = userid;
     }
 
-    public Long getSubject_id() {
-        return subject_id;
+
+    public long getSubjectId() {
+        return subjectId;
     }
 
-    public void setSubject_id(Long subject_id) {
-        this.subject_id = subject_id;
+    public void setSubjectId(long subjectId) {
+        this.subjectId = subjectId;
     }
+
 }

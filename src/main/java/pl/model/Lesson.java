@@ -1,18 +1,26 @@
 package pl.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "lesson")
 public class Lesson {
-    private Long id_lesson;
+
+    private long idLesson;
     private String content;
     private String name;
-    private Long subject_id;
+    private long subjectId;
 
-    public Long getId_lesson() {
-        return id_lesson;
+
+    public long getIdLesson() {
+        return idLesson;
     }
 
-    public void setId_lesson(Long id_lesson) {
-        this.id_lesson = id_lesson;
+    public void setIdLesson(long idLesson) {
+        this.idLesson = idLesson;
     }
+
 
     public String getContent() {
         return content;
@@ -22,6 +30,7 @@ public class Lesson {
         this.content = content;
     }
 
+
     public String getName() {
         return name;
     }
@@ -30,11 +39,13 @@ public class Lesson {
         this.name = name;
     }
 
-    public Long getSubject_id() {
-        return subject_id;
+
+    public long getSubjectId() {
+        return subjectId;
     }
 
-    public void setSubject_id(Long subject_id) {
-        this.subject_id = subject_id;
+    public void setSubjectId(long subjectId) {
+        this.subjectId = subjectId;
     }
+
 }

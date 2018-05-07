@@ -1,19 +1,28 @@
 package pl.model;
 
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "message")
 public class Message {
-    private Long idmessage;
+
+    private long idmessage;
     private String content;
     private String fromwho;
     private String title;
     private String towho;
 
-    public Long getIdmessage() {
+
+    public long getIdmessage() {
         return idmessage;
     }
 
-    public void setIdmessage(Long idmessage) {
+    public void setIdmessage(long idmessage) {
         this.idmessage = idmessage;
     }
+
 
     public String getContent() {
         return content;
@@ -23,6 +32,7 @@ public class Message {
         this.content = content;
     }
 
+
     public String getFromwho() {
         return fromwho;
     }
@@ -30,6 +40,7 @@ public class Message {
     public void setFromwho(String fromwho) {
         this.fromwho = fromwho;
     }
+
 
     public String getTitle() {
         return title;
@@ -39,6 +50,7 @@ public class Message {
         this.title = title;
     }
 
+
     public String getTowho() {
         return towho;
     }
@@ -46,4 +58,5 @@ public class Message {
     public void setTowho(String towho) {
         this.towho = towho;
     }
+
 }

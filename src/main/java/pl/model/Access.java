@@ -1,40 +1,51 @@
 package pl.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "access")
 public class Access {
-    private Long idaccess;
-    private Long roleid;
-    private Long subjectid;
-    private Long userid;
 
-    public Long getIdaccess() {
-        return idaccess;
-    }
+  private long idaccess;
+  private long roleid;
+  private long courseId;
+  private long userId;
 
-    public void setIdaccess(Long idaccess) {
-        this.idaccess = idaccess;
-    }
 
-    public Long getRoleid() {
-        return roleid;
-    }
+  public long getIdaccess() {
+    return idaccess;
+  }
 
-    public void setRoleid(Long roleid) {
-        this.roleid = roleid;
-    }
+  public void setIdaccess(long idaccess) {
+    this.idaccess = idaccess;
+  }
 
-    public Long getSubjectid() {
-        return subjectid;
-    }
 
-    public void setSubjectid(Long subjectid) {
-        this.subjectid = subjectid;
-    }
+  public long getRoleid() {
+    return roleid;
+  }
 
-    public Long getUserid() {
-        return userid;
-    }
+  public void setRoleid(long roleid) {
+    this.roleid = roleid;
+  }
 
-    public void setUserid(Long userid) {
-        this.userid = userid;
-    }
+
+  public long getCourseId() {
+    return courseId;
+  }
+
+  public void setCourseId(long courseId) {
+    this.courseId = courseId;
+  }
+
+
+  public long getUserId() {
+    return userId;
+  }
+
+  public void setUserId(long userId) {
+    this.userId = userId;
+  }
+
 }
