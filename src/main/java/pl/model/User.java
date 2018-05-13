@@ -25,6 +25,8 @@ public class User {
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Set<UserRole> roles = new HashSet<>();
     private Boolean active;
+    @OneToMany(mappedBy = "user")
+    private Set<Usercourses> usercourses = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -119,5 +121,9 @@ public class User {
         result = 31 * result + (roles != null ? roles.hashCode() : 0);
         result = 31 * result + (active != null ? active.hashCode() : 0);
         return result;
+    }
+
+    public Set<Usercourses> getUsercourses() {
+        return usercourses;
     }
 }

@@ -9,10 +9,6 @@ import java.util.List;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
-
-    // public List<Quiz> findBySubject(Course subject);
-
-
-    List<Quiz> findBySubject(Course subject);
+    List<Quiz> findByCourse(Course course);
 
 }

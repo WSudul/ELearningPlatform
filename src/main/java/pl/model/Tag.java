@@ -12,7 +12,7 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "course")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tagSet")
     private Set<Course> courseSet = new HashSet<>();
 
     public Tag(String name) {

@@ -1,17 +1,20 @@
 package pl.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "review")
 public class Review {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String text;
     private long dateAdded;
     private long score;
-    private long usercoursesId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usercourses_id")
+    private Usercourses usercourses;
 
 
     public long getId() {
@@ -50,12 +53,11 @@ public class Review {
     }
 
 
-    public long getUsercoursesId() {
-        return usercoursesId;
+    public Usercourses getUsercourses() {
+        return usercourses;
     }
 
-    public void setUsercoursesId(long usercoursesId) {
-        this.usercoursesId = usercoursesId;
+    public void setUsercourses(Usercourses usercourses) {
+        this.usercourses = usercourses;
     }
-
 }
