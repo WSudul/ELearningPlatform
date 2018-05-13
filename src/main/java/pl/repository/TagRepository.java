@@ -1,10 +1,12 @@
 package pl.repository;
 
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import pl.model.Question;
+import pl.model.Tag;
 
 @Repository
-public interface QuestionRepository extends JpaRepository<Question, Long> {
+public interface TagRepository extends JpaRepository<Tag, Long> {
+
 
 }

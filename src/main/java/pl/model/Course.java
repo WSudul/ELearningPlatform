@@ -24,6 +24,9 @@ public class Course {
     @NotEmpty
     private String name;
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @JoinTable(name = "Course_Tag",
+            joinColumns = {@JoinColumn(name = "course_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id")})
     private Set<Tag> tagSet = new HashSet<>();
 
 
