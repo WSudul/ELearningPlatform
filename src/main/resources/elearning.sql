@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 08, 2018 at 12:08 AM
+-- Generation Time: May 19, 2018 at 12:47 AM
 -- Server version: 10.1.28-MariaDB
 -- PHP Version: 7.1.11
 
@@ -47,6 +47,14 @@ CREATE TABLE `course` (
   `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `course`
+--
+
+INSERT INTO `course` (`id`, `description`, `name`) VALUES
+(1, 'Long text descrfiption course 1', 'Course 1'),
+(2, 'Long text descrfiption course 2', 'Course 2');
+
 -- --------------------------------------------------------
 
 --
@@ -71,6 +79,16 @@ CREATE TABLE `course_tags` (
   `course_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `course_tags`
+--
+
+INSERT INTO `course_tags` (`tag_id`, `course_id`) VALUES
+(1, 1),
+(2, 1),
+(2, 2),
+(3, 2);
+
 -- --------------------------------------------------------
 
 --
@@ -83,6 +101,14 @@ CREATE TABLE `lesson` (
   `name` varchar(255) NOT NULL,
   `subject_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `lesson`
+--
+
+INSERT INTO `lesson` (`id_lesson`, `content`, `name`, `subject_id`) VALUES
+(1, 'lessson content 1 for coruse 1', 'Lesson 1', 1),
+(2, 'lessson content 2 for coruse 1', 'Lesson 2', 1);
 
 -- --------------------------------------------------------
 
@@ -115,6 +141,14 @@ CREATE TABLE `question` (
   `id_quiz` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `question`
+--
+
+INSERT INTO `question` (`id_question`, `answer1`, `answer2`, `answer3`, `answer4`, `correct_answer`, `question`, `id_quiz`) VALUES
+(1, 'A1', 'A2', 'A3', 'A4', 3, 'question 1 quiz 1', 1),
+(2, 'A11', 'A22', 'A33', 'A44', 3, 'questio n2', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -126,6 +160,15 @@ CREATE TABLE `quiz` (
   `name` varchar(255) NOT NULL,
   `subject_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `quiz`
+--
+
+INSERT INTO `quiz` (`id_quiz`, `name`, `subject_id`) VALUES
+(1, 'Quiz 1 for course 2 ', 2),
+(2, 'Quiz 2 for course 2 ', 2),
+(3, 'Quiz 1 for course 1', 1);
 
 -- --------------------------------------------------------
 
@@ -149,10 +192,20 @@ CREATE TABLE `requestaccess` (
 CREATE TABLE `review` (
   `id` int(11) NOT NULL,
   `text` text,
-  `date_added` int(11) NOT NULL,
+  `date_added` date NOT NULL,
   `score` tinyint(4) DEFAULT NULL,
   `usercourses_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `review`
+--
+
+INSERT INTO `review` (`id`, `text`, `date_added`, `score`, `usercourses_id`) VALUES
+(1, 'review 10/10 usercourses 1', '0000-00-00', 9, 1),
+(2, 'review 10/10 usercourses 3', '0000-00-00', 5, 3),
+(3, 'review 10/10 usercourses 1', '2018-05-17', 9, 1),
+(4, 'review 10/10 usercourses 3', '2018-05-17', 5, 3);
 
 -- --------------------------------------------------------
 
@@ -179,6 +232,17 @@ CREATE TABLE `tag` (
   `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `tag`
+--
+
+INSERT INTO `tag` (`id`, `name`) VALUES
+(1, 'Tag1'),
+(2, 'Tag2'),
+(3, 'Tag3'),
+(4, 'Tag4'),
+(5, 'Tag5');
+
 -- --------------------------------------------------------
 
 --
@@ -190,8 +254,17 @@ CREATE TABLE `user` (
   `email` varchar(255) NOT NULL,
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`id`, `email`, `first_name`, `last_name`, `password`, `active`) VALUES
+(1, 'jo@gmail.com', 'Jan', 'Nowak', 'asdfghj', 0),
+(2, 'jo23@gmail.com', 'Wol', 'Jlol', 'nopasswrodsz', 1);
 
 -- --------------------------------------------------------
 
@@ -201,11 +274,20 @@ CREATE TABLE `user` (
 
 CREATE TABLE `usercourses` (
   `id` int(11) NOT NULL,
-  `completed` tinyint(1) NOT NULL,
+  `completed` tinyint(1) NOT NULL DEFAULT '0',
   `date_completed` timestamp NULL DEFAULT NULL,
   `user_id` bigint(20) NOT NULL,
   `course_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `usercourses`
+--
+
+INSERT INTO `usercourses` (`id`, `completed`, `date_completed`, `user_id`, `course_id`) VALUES
+(1, 0, NULL, 1, 1),
+(2, 0, NULL, 1, 2),
+(3, 0, NULL, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -219,6 +301,14 @@ CREATE TABLE `user_role` (
   `role` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Dumping data for table `user_role`
+--
+
+INSERT INTO `user_role` (`id`, `description`, `role`) VALUES
+(1, 'role user 1', 'USER_ROLE'),
+(2, 'role user 2 baadad', 'USER_ROLE_extra');
+
 -- --------------------------------------------------------
 
 --
@@ -229,6 +319,15 @@ CREATE TABLE `user_roles` (
   `user_id` bigint(20) NOT NULL,
   `roles_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `user_roles`
+--
+
+INSERT INTO `user_roles` (`user_id`, `roles_id`) VALUES
+(1, 1),
+(1, 2),
+(2, 2);
 
 --
 -- Indexes for dumped tables
@@ -260,6 +359,7 @@ ALTER TABLE `coursegrade`
 --
 ALTER TABLE `course_tags`
   ADD PRIMARY KEY (`tag_id`,`course_id`),
+  ADD UNIQUE KEY `tag_id_3` (`tag_id`,`course_id`),
   ADD KEY `tag_id` (`tag_id`),
   ADD KEY `tag_id_2` (`tag_id`,`course_id`),
   ADD KEY `course_id` (`course_id`);
@@ -301,8 +401,9 @@ ALTER TABLE `requestaccess`
 -- Indexes for table `review`
 --
 ALTER TABLE `review`
-  ADD KEY `usercourses_id` (`usercourses_id`),
-  ADD KEY `date_added` (`date_added`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `date_added` (`date_added`),
+  ADD KEY `usercourses_id` (`usercourses_id`);
 
 --
 -- Indexes for table `studentgrade`
@@ -315,13 +416,15 @@ ALTER TABLE `studentgrade`
 -- Indexes for table `tag`
 --
 ALTER TABLE `tag`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
 
 --
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- Indexes for table `usercourses`
@@ -329,13 +432,15 @@ ALTER TABLE `user`
 ALTER TABLE `usercourses`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `user_id` (`user_id`,`course_id`),
+  ADD UNIQUE KEY `user_id_2` (`user_id`,`course_id`),
   ADD KEY `course_id` (`course_id`);
 
 --
 -- Indexes for table `user_role`
 --
 ALTER TABLE `user_role`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `description` (`description`);
 
 --
 -- Indexes for table `user_roles`
@@ -358,7 +463,7 @@ ALTER TABLE `access`
 -- AUTO_INCREMENT for table `course`
 --
 ALTER TABLE `course`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `coursegrade`
@@ -370,7 +475,7 @@ ALTER TABLE `coursegrade`
 -- AUTO_INCREMENT for table `lesson`
 --
 ALTER TABLE `lesson`
-  MODIFY `id_lesson` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_lesson` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `message`
@@ -382,13 +487,13 @@ ALTER TABLE `message`
 -- AUTO_INCREMENT for table `question`
 --
 ALTER TABLE `question`
-  MODIFY `id_question` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_question` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `quiz`
 --
 ALTER TABLE `quiz`
-  MODIFY `id_quiz` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_quiz` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `requestaccess`
@@ -397,22 +502,40 @@ ALTER TABLE `requestaccess`
   MODIFY `idaccess` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `review`
+--
+ALTER TABLE `review`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `studentgrade`
 --
 ALTER TABLE `studentgrade`
   MODIFY `idstudentgrade` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `tag`
+--
+ALTER TABLE `tag`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `usercourses`
+--
+ALTER TABLE `usercourses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `user_role`
 --
 ALTER TABLE `user_role`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
