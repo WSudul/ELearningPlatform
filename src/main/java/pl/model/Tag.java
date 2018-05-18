@@ -15,6 +15,9 @@ public class Tag {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tagSet")
     private Set<Course> courseSet = new HashSet<>();
 
+    public Tag() {
+    }
+
     public Tag(String name) {
         this.name = name;
     }

@@ -11,7 +11,7 @@ public class Lesson {
     @NotEmpty
     @Column(length = 50000)
     @Type(type = "text")
-    private final ThreadLocal<String> content = new ThreadLocal<>();
+    private String content;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_lesson")
@@ -29,7 +29,7 @@ public class Lesson {
         super();
         this.idLesson = idLesson;
         this.name = name;
-        this.content.set(content);
+        this.content = (content);
         this.course = course;
     }
     public String getName() {
@@ -48,11 +48,11 @@ public class Lesson {
     }
 
     public String getContent() {
-        return content.get();
+        return content;
     }
 
     public void setContent(String content) {
-        this.content.set(content);
+        this.content = content;
     }
 
     public Course getCourse() {
@@ -63,4 +63,35 @@ public class Lesson {
         this.course = course;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Lesson lesson = (Lesson) o;
+
+        if (content != null ? !content.equals(lesson.content) : lesson.content != null) return false;
+        if (idLesson != null ? !idLesson.equals(lesson.idLesson) : lesson.idLesson != null) return false;
+        if (name != null ? !name.equals(lesson.name) : lesson.name != null) return false;
+        return course != null ? course.equals(lesson.course) : lesson.course == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = content != null ? content.hashCode() : 0;
+        result = 31 * result + (idLesson != null ? idLesson.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (course != null ? course.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Lesson{" +
+                "content='" + content + '\'' +
+                ", idLesson=" + idLesson +
+                ", name='" + name + '\'' +
+                ", course=" + course +
+                '}';
+    }
 }

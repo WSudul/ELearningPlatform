@@ -6,9 +6,9 @@ import javax.persistence.*;
 @Table(name = "user_role")
 public class UserRole {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
   private String description;
   private String role;
 
@@ -39,4 +39,23 @@ public class UserRole {
     this.role = role;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    UserRole userRole = (UserRole) o;
+
+    if (id != userRole.id) return false;
+    if (description != null ? !description.equals(userRole.description) : userRole.description != null) return false;
+    return role != null ? role.equals(userRole.role) : userRole.role == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = (int) (id ^ (id >>> 32));
+    result = 31 * result + (description != null ? description.hashCode() : 0);
+    result = 31 * result + (role != null ? role.hashCode() : 0);
+    return result;
+  }
 }

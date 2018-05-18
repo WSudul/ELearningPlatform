@@ -24,7 +24,7 @@ public class Course {
     @NotEmpty
     private String name;
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinTable(name = "Course_Tag",
+    @JoinTable(name = "course_tags",
             joinColumns = {@JoinColumn(name = "course_id")},
             inverseJoinColumns = {@JoinColumn(name = "tag_id")})
     private Set<Tag> tagSet = new HashSet<>();
@@ -109,5 +109,35 @@ public class Course {
 
     public void setStudentGrades(List<StudentGrade> studentGrades) {
         this.studentGrades = studentGrades;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Course course = (Course) o;
+
+        if (id != course.id) return false;
+        if (description != null ? !description.equals(course.description) : course.description != null) return false;
+        if (name != null ? !name.equals(course.name) : course.name != null) return false;
+        if (tagSet != null ? !tagSet.equals(course.tagSet) : course.tagSet != null) return false;
+        if (quizes != null ? !quizes.equals(course.quizes) : course.quizes != null) return false;
+        if (lessons != null ? !lessons.equals(course.lessons) : course.lessons != null) return false;
+        if (grades != null ? !grades.equals(course.grades) : course.grades != null) return false;
+        return studentGrades != null ? studentGrades.equals(course.studentGrades) : course.studentGrades == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (tagSet != null ? tagSet.hashCode() : 0);
+        result = 31 * result + (quizes != null ? quizes.hashCode() : 0);
+        result = 31 * result + (lessons != null ? lessons.hashCode() : 0);
+        result = 31 * result + (grades != null ? grades.hashCode() : 0);
+        result = 31 * result + (studentGrades != null ? studentGrades.hashCode() : 0);
+        return result;
     }
 }
