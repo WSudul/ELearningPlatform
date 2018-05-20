@@ -1,6 +1,7 @@
 package pl.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "review")
@@ -10,7 +11,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String text;
-    private long dateAdded;
+    private Date dateAdded;
     private long score;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usercourses_id")
@@ -35,11 +36,11 @@ public class Review {
     }
 
 
-    public long getDateAdded() {
+    public Date getDateAdded() {
         return dateAdded;
     }
 
-    public void setDateAdded(long dateAdded) {
+    public void setDateAdded(Date dateAdded) {
         this.dateAdded = dateAdded;
     }
 

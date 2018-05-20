@@ -57,12 +57,6 @@
             <!--<scope>provided</scope>-->
         </dependency>
 
-        <!--<dependency>-->
-        <!--<groupId>com.h2database</groupId>-->
-        <!--<artifactId>h2</artifactId>-->
-        <!--<scope>runtime</scope>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>net.sourceforge.nekohtml</groupId>
             <artifactId>nekohtml</artifactId>
@@ -108,11 +102,11 @@
 
 
         <!--Prepare separate profile for tests ?-->
-        <!--<dependency>-->
-        <!--<groupId>com.h2database</groupId>-->
-        <!--<artifactId>h2</artifactId>-->
-        <!--<scope>test</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
 
 
         <!-- JUNIT TEST -->
