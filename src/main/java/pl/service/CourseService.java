@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import pl.model.Course;
+import pl.model.Lesson;
 import pl.model.Tag;
 import pl.repository.CourseRepository;
+import pl.repository.LessonRepository;
 import pl.repository.TagRepository;
 
 import java.util.List;
@@ -17,8 +19,8 @@ import java.util.stream.Collectors;
 public class CourseService {
 
     private CourseRepository courseRepository;
-
     private TagRepository tagRepository;
+    private LessonRepository lessonRepository;
 
     @Autowired
     public void setCourseRepository(CourseRepository courseRepository) {
@@ -28,6 +30,11 @@ public class CourseService {
     @Autowired
     public void setTagRepository(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
+    }
+
+    @Autowired
+    public void setLessonRepository(LessonRepository lessonRepository) {
+        this.lessonRepository = lessonRepository;
     }
 
     public boolean addNewCourse(Course course) {
@@ -171,6 +178,62 @@ public class CourseService {
 
     private Set<String> extractTagNames(Set<Tag> tags) {
         return tags.stream().map(Tag::getName).collect(Collectors.toSet());
+    }
+
+    public boolean addLessonToCourse(long courseId, String lessonName, String lessonContent) {
+        Optional<Course> course = courseRepository.findById(courseId);
+        if (!course.isPresent()) {
+            System.out.println("No Course exists with id: " + courseId);
+            return false;
+        } else if (lessonName.isEmpty() || lessonContent.isEmpty()) {
+            System.out.println("Course name or content cannot be empty!");
+            return false;
+        }
+
+
+        Lesson lesson = new Lesson();
+        lesson.setContent(lessonName);
+        lesson.setContent(lessonContent);
+        lesson.setCourse(course.get());
+
+        try {
+            lessonRepository.save(lesson);
+            course.get().getLessons().add(lesson);
+            courseRepository.save(course.get());
+        } catch (DataAccessException ex) {
+            System.out.println("Exception caught while saving lesson: " + ex.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean removeLessonFromCourse(long courseId, long lessonId) {
+        Optional<Course> course = courseRepository.findById(courseId);
+        Optional<Lesson> lesson = lessonRepository.findById(lessonId);
+        if (!course.isPresent()) {
+            System.out.println("No Course exists with id: " + courseId);
+            return false;
+        } else if (!lesson.isPresent()) {
+            System.out.println("No Lesson exists with id: " + lessonId);
+            return false;
+        }
+
+        List<Lesson> lessons = course.get().getLessons();
+        if (lessons.contains(lesson.get())) {
+            try {
+                lessonRepository.delete(lesson.get());
+            } catch (DataAccessException ex) {
+                System.out.println("Exception caught while deleting lesson: " + ex.getMessage());
+                return false;
+            }
+            return true;
+        } else {
+            System.out.println("Lesson : " + lessonId + " does not belong to course : " + courseId);
+            System.out.println("Exisitng courses: " + lessons.toString());
+            return false;
+        }
+
     }
 
 

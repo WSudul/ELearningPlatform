@@ -20,5 +20,5 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
     @Query("delete from Lesson l where l.idLesson = ?1")
     void deleteByIdLesson(Long idLesson);
 
-    List<Lesson> findAllByCourse(Course course_1);
+    List<Lesson> findAllByCourse(Course course);
 }
