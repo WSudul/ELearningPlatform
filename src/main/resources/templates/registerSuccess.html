@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <meta charset="UTF-8"></meta>
+    <title>Pomyślnie zarejestrowano użytkownika</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"></link>
+    <link rel="stylesheet" type="text/css" href="css/styles.css"></link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/}">E-learning</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <!--
+                  <ul class="nav navbar-nav navbar-right">
+                    <li><a th:href="@{/register}">Rejestracja</a></li>
+                    <li><a th:href="@{/login}">Logowanie</a></li>
+                  </ul>
+            -->
+        </div>
+    </div>
+</nav>
+
+
+
+
+<div class="container-fluid bg-1 text-center fill">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1>Dziękujemy za rejestracje w systemie!</h1>
+            <a href="#" th:href="@{/}">Wróć do strony głównej</a>
+        </div>
+
+    </div>
+
+</div>
+</body>
+</html>
+
+
