@@ -46,6 +46,10 @@ public class Course {
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<StudentGrade> studentGrades = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course")
+    @LazyCollection(LazyCollectionOption.TRUE)
+    private Set<Usercourses> usercourses = new HashSet<>();
+
     public long getId() {
         return id;
     }
@@ -140,5 +144,13 @@ public class Course {
         result = 31 * result + (grades != null ? grades.hashCode() : 0);
         result = 31 * result + (studentGrades != null ? studentGrades.hashCode() : 0);
         return result;
+    }
+
+    public Set<Usercourses> getUsercourses() {
+        return usercourses;
+    }
+
+    public void setUsercourses(Set<Usercourses> usercourses) {
+        this.usercourses = usercourses;
     }
 }

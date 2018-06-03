@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.model.*;
 import pl.repository.CourseRepository;
+import pl.repository.ReviewRepository;
 import pl.repository.TagRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class SuggestionService {
@@ -19,6 +21,10 @@ public class SuggestionService {
 
     @Autowired
     CourseRepository courseRepository;
+
+    @Autowired
+    ReviewRepository reviewRepository;
+
 
 
     public List<Course> findCoursesSharingTags(Collection<Tag> tags) {
@@ -32,15 +38,40 @@ public class SuggestionService {
     }
 
     public Set<Course> suggestCourseToUser(User user) {
+        final int kTopTagLimit = 3; //limit to top 3 because not all courses share many same tags.
 
         Set<Usercourses> usercourses = user.getUsercourses();
 
         if (usercourses.isEmpty()) {
-            return getTopRatedCourses(10);
+            return getTopNRatedCourses(10);
         }
 
-        Map<Tag, Integer> tagCountMap = new HashMap<>();
+        Map<Tag, Integer> tagCountMap = createTagCountMap(usercourses);
+        List<Tag> topTags = new ArrayList<>();
 
+        tagCountMap.entrySet().stream()
+                .sorted(Map.Entry.<Tag, Integer>comparingByValue().reversed()).limit(kTopTagLimit)
+                .forEach(mapEntry -> topTags.add(mapEntry.getKey()));
+
+
+        Set<Course> suggestedCourses = courseRepository
+                .findByTagSetName(topTags.stream().map(Tag::getName).collect(Collectors.toSet())).stream().collect(
+                        Collectors.toSet());
+
+        return suggestedCourses;
+    }
+
+    private void updateTagCount(Set<Tag> tags, Map<Tag, Integer> mapCount) {
+        for (Tag tag : tags) {
+            if (mapCount.containsKey(tag))
+                mapCount.put(tag, mapCount.get(tag) + 1);
+            else
+                mapCount.put(tag, 1);
+        }
+    }
+
+    private Map<Tag, Integer> createTagCountMap(Iterable<Usercourses> usercourses) {
+        Map<Tag, Integer> tagCountMap = new HashMap<>();
         for (Usercourses userCourse : usercourses) {
             Set<Review> reviews = userCourse.getReview();
 
@@ -49,45 +80,50 @@ public class SuggestionService {
                         Comparator.comparing(o -> o.getDateAdded().toInstant()));
 
                 if (latestReview.getScore() > score50Percent) {
-                    for (Tag tag : userCourse.getCourse().getTagSet()) {
-                        if (tagCountMap.containsKey(tag))
-                            tagCountMap.put(tag, tagCountMap.get(tag) + 1);
-                        else
-                            tagCountMap.put(tag, 1);
-                    }
-
+                    updateTagCount(userCourse.getCourse().getTagSet(), tagCountMap);
                 }
             }
         }
 
-        List<Tag> topTags = new ArrayList<>();
-        tagCountMap.entrySet().stream()
-                .sorted(Map.Entry.<Tag, Integer>comparingByValue().reversed()).limit(10)
-                .forEach(mapEntry -> topTags.add(mapEntry.getKey()));
-
-
-        //#TODO rework this naive version
-
-        Set<Course> courses = new HashSet<>();
-
-        topTags.forEach(tag -> courses.addAll(
-                this.findCoursesSharingTags(
-                        new HashSet<>(Arrays.asList(tag))
-                )));
-
-        return courses;
+        return tagCountMap;
     }
 
 
-    //#TODO implement this
-    public Set<Course> getTopRatedCourses(int count) {
+    public Set<Course> getTopNRatedCourses(int n) {
+        Map<Course, Double> courseAverageScoreMap = new HashMap<>();
+        for (Course course : courseRepository.findAll()) {
+            courseAverageScoreMap.put(course, (calculateAverageScoreForCourse(course)));
+        }
 
-        if (count < 0)
-            return null;
+        if (courseAverageScoreMap.size() > n) {
+            List<Map.Entry<Course, Double>> entries = courseAverageScoreMap.entrySet().stream()
+                    .collect(Collectors.toList());
+            //sort the list by avg score descending
+            Collections.sort(entries, (e1, e2) -> Double.compare(e2.getValue(), e1.getValue()));
+
+            //extract the top N results
+            List<Map.Entry<Course, Double>> subList = entries.subList(0, n);
+            return subList.stream().map(Map.Entry::getKey).collect(Collectors.toSet());
 
 
-        return new HashSet<Course>();
+        } else
+            return courseAverageScoreMap.keySet();
 
+
+    }
+
+    public Double calculateAverageScoreForCourse(Course course) {
+        Double sumOfScores = 0d;
+        Long reviewCounts = 0l;
+        Set<Usercourses> usercourses = course.getUsercourses();
+        for (Usercourses usercourse : usercourses) {
+            Set<Review> reviews = usercourse.getReview();
+            reviewCounts += reviews.size();
+            for (Review review : reviews)
+                sumOfScores += review.getScore();
+        }
+
+        return (sumOfScores / reviewCounts);
 
     }
 

@@ -12,7 +12,7 @@ public class Usercourses {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private long completed;
+    private boolean completed;
     private java.sql.Timestamp dateCompleted;
 
 
@@ -35,11 +35,11 @@ public class Usercourses {
     }
 
 
-    public long getCompleted() {
+    public boolean getCompleted() {
         return completed;
     }
 
-    public void setCompleted(long completed) {
+    public void setCompleted(boolean completed) {
         this.completed = completed;
     }
 
