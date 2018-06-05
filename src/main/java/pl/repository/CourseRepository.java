@@ -13,4 +13,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findByNameContaining(String name);
 
     List<Course> findByTagSetName(Set<String> names);
+
 }
