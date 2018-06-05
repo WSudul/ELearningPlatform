@@ -29,7 +29,6 @@ import static org.mockito.BDDMockito.given;
 @ContextConfiguration(classes = {TestConfig.class})
 public class CourseServiceTest {
 
-
     private final String tag_1 = "tag_1";
     private final String tag_2 = "tag_2";
     @Autowired
@@ -231,4 +230,56 @@ public class CourseServiceTest {
 
         assertFalse(courseService.removeLessonFromCourse(courseId, lessonId));
     }
+
+
+    private final String newCourseName="NewCourseName";
+    private final String newCourseDescription="NewCourseDescription";
+    private final long updatedCourseId=12345;
+
+    @Test
+    public void updateCourse() throws Exception {
+
+        given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
+
+        assertTrue(courseService.updateCourse(updatedCourseId,newCourseName,newCourseDescription));
+
+    }
+
+    @Test
+    public void updateCourse_fail_no_course() throws Exception {
+
+        given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.empty());
+
+        assertFalse(courseService.updateCourse(updatedCourseId,newCourseName,newCourseDescription));
+
+    }
+
+    @Test
+    public void updateCourseName() throws Exception {
+        given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
+
+        assertTrue(courseService.updateCourseName(updatedCourseId,newCourseName));
+    }
+
+    @Test
+    public void updateCourseName_fail_on_empty() throws Exception {
+        given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
+
+        assertFalse(courseService.updateCourseName(updatedCourseId,""));
+    }
+
+    @Test
+    public void updateCourseDescription() throws Exception {
+        given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
+
+        assertTrue(courseService.updateCourseDescription(updatedCourseId,newCourseDescription));
+    }
+
+    @Test
+    public void updateCourseDescription_fail_on_empty() throws Exception {
+        given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
+
+        assertFalse(courseService.updateCourseDescription(updatedCourseId,""));
+    }
+
 }

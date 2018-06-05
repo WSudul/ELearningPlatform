@@ -236,5 +236,51 @@ public class CourseService {
 
     }
 
+    public boolean updateCourseName(long courseId, String newName) {
+        return updateCourse(courseId, newName, null);
+    }
+
+    public boolean updateCourseDescription(long courseId, String newDescription) {
+        return updateCourse(courseId, null, newDescription);
+    }
+
+    public boolean updateCourse(long courseId, String newName, String  newDescription){
+        Optional<Course> courseOptional = courseRepository.findById(courseId);
+
+        if(!courseOptional.isPresent())
+            return false;
+        Course course=courseOptional.get();
+
+        if (newName != null)
+        {
+            if (newName.isEmpty()) {
+                System.out.println("Name cannot be empty");
+                return false;
+            } else {
+                course.setName(newName);
+            }
+        }
+
+        if (newDescription != null)
+        {
+            if (newDescription.isEmpty()) {
+                System.out.println("Name cannot be empty");
+                return false;
+            } else {
+                course.setDescription(newDescription);
+            }
+        }
+
+        try{
+            courseRepository.save(course);
+        }catch(DataAccessException e)
+        {
+            System.out.println("Exception caught when saving course: "+ e.getMessage());
+            return false;
+        }
+
+        return true;
+
+    }
 
 }
