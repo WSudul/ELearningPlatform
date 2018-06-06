@@ -12,9 +12,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import pl.model.Course;
 import pl.model.Lesson;
+import pl.model.Quiz;
 import pl.model.Tag;
 import pl.repository.CourseRepository;
 import pl.repository.LessonRepository;
+import pl.repository.QuizRepository;
 import pl.repository.TagRepository;
 import pl.service.config.TestConfig;
 
@@ -39,6 +41,8 @@ public class CourseServiceTest {
     private CourseRepository courseRepository;
     @MockBean
     private LessonRepository lessonRepository;
+    @MockBean
+    private QuizRepository quizRepository;
 
     private Set<Tag> tagSet_1 = new HashSet<>();
     private Course course = new Course();
@@ -232,16 +236,16 @@ public class CourseServiceTest {
     }
 
 
-    private final String newCourseName="NewCourseName";
-    private final String newCourseDescription="NewCourseDescription";
-    private final long updatedCourseId=12345;
+    private final String newCourseName = "NewCourseName";
+    private final String newCourseDescription = "NewCourseDescription";
+    private final long updatedCourseId = 12345;
 
     @Test
     public void updateCourse() throws Exception {
 
         given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
 
-        assertTrue(courseService.updateCourse(updatedCourseId,newCourseName,newCourseDescription));
+        assertTrue(courseService.updateCourse(updatedCourseId, newCourseName, newCourseDescription));
 
     }
 
@@ -250,7 +254,7 @@ public class CourseServiceTest {
 
         given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.empty());
 
-        assertFalse(courseService.updateCourse(updatedCourseId,newCourseName,newCourseDescription));
+        assertFalse(courseService.updateCourse(updatedCourseId, newCourseName, newCourseDescription));
 
     }
 
@@ -258,28 +262,95 @@ public class CourseServiceTest {
     public void updateCourseName() throws Exception {
         given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
 
-        assertTrue(courseService.updateCourseName(updatedCourseId,newCourseName));
+        assertTrue(courseService.updateCourseName(updatedCourseId, newCourseName));
     }
 
     @Test
     public void updateCourseName_fail_on_empty() throws Exception {
         given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
 
-        assertFalse(courseService.updateCourseName(updatedCourseId,""));
+        assertFalse(courseService.updateCourseName(updatedCourseId, ""));
     }
 
     @Test
     public void updateCourseDescription() throws Exception {
         given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
 
-        assertTrue(courseService.updateCourseDescription(updatedCourseId,newCourseDescription));
+        assertTrue(courseService.updateCourseDescription(updatedCourseId, newCourseDescription));
     }
 
     @Test
     public void updateCourseDescription_fail_on_empty() throws Exception {
         given(this.courseRepository.findById(updatedCourseId)).willReturn(Optional.of(course));
 
-        assertFalse(courseService.updateCourseDescription(updatedCourseId,""));
+        assertFalse(courseService.updateCourseDescription(updatedCourseId, ""));
     }
 
+    @Test
+    public void addQuizToCourse() throws Exception {
+        long courseId = 123;
+        String quizName = "tacticalName";
+        Quiz quiz = new Quiz();
+        quiz.setName(quizName);
+
+        given(this.courseRepository.findById(courseId)).willReturn(Optional.of(course));
+        given(this.quizRepository.save(quiz)).willReturn(quiz);
+        given(this.courseRepository.save(course)).willReturn((course));
+        assertTrue(courseService.addQuizToCourse(courseId, quizName));
+
+    }
+
+    @Test
+    public void addQuizToCourse_fails_on_empty_name() {
+        long courseId = 123;
+        String quizName = "";
+
+        assertFalse(courseService.addQuizToCourse(courseId, quizName));
+    }
+
+    @Test
+    public void addQuizToCourse_fails_on_non_existing_course() {
+        long courseId = 123;
+        String quizName = "";
+
+        given(this.courseRepository.findById(courseId)).willReturn(Optional.empty());
+        assertFalse(courseService.addQuizToCourse(courseId, quizName));
+    }
+
+    @Test
+    public void removeQuizFromCourse() {
+        long courseId = 123;
+        long quizId = 666;
+
+        Quiz quiz = new Quiz();
+        course.getQuizes().add(quiz);
+
+        given(this.courseRepository.findById(courseId)).willReturn(Optional.of(course));
+        given(this.quizRepository.findById(quizId)).willReturn(Optional.of(quiz));
+
+        assertTrue(courseService.removeQuiz(courseId, quizId));
+    }
+
+    @Test
+    public void removeQuizFromCourse_fails_no_course() {
+        long courseId = 123;
+        long quizId = 666;
+
+        Quiz quiz = new Quiz();
+
+        given(this.courseRepository.findById(courseId)).willReturn(Optional.empty());
+        given(this.quizRepository.findById(quizId)).willReturn(Optional.of(quiz));
+        assertFalse(courseService.removeQuiz(courseId, quizId));
+    }
+
+    @Test
+    public void removeQuizFromCourse_fails_no_quiz() {
+        long courseId = 123;
+        long quizId = 666;
+
+
+        given(this.courseRepository.findById(courseId)).willReturn(Optional.of(course));
+        given(this.quizRepository.findById(quizId)).willReturn(Optional.empty());
+        assertFalse(courseService.removeQuiz(courseId, quizId));
+    }
 }
