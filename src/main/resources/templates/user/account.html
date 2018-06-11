@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+<title>Zarządzanie kontem</title>
+<meta charset="utf-8"></meta>
+  <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"></link>
+  <link rel="stylesheet" type="text/css" href="../css/styles.css"></link>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">E-learning</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a th:href="@{/user/home}">Home</a></li>
+        <li><a th:href="@{/user/courses}">Kursy</a></li>
+        <li><a th:href="@{/user/contact}">Kontakt</a></li>
+        <li><a th:href="@{/user/account}">Moje konto</a></li>
+        <li><a th:href="@{/logout}"><img th:src="@{../images/wyloguj.png}" src="../images/wyloguj.png" alt="Wyloguj" style="height: 30px; width: 30px" onmouseover="this.src='../images/wyloguj2.png'" onmouseout="this.src='../images/wyloguj.png'"/></a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid bg-3 text-center">    
+ 
+    <h3>Profil konta : </h3><br/>
+ <table>
+  <tr class="panel panel-primary" >	
+   		<td style="padding-left: 30px">Imię:</td>
+   		<td th:text="${user.getFirstName()}" style="color: #000">Imie</td>
+  </tr>
+    <tr class="panel panel-primary" >	
+   		<td style="padding-left: 30px">Nazwisko: </td>
+   		<td th:text="${user.getLastName()}" style="color: #000">Imie</td>
+  </tr>
+      <tr class="panel panel-primary" >	
+   		<td style="padding-left: 30px">Email: </td>
+   		<td th:text="${user.getEmail()}" style="color: #000">Imie</td>
+  </tr>
+  </table><br/>
+  			<a th:href="@{/user/receiveMessageStudent}">
+   				<button type="button" class="btn btn-success">Sprawdź wiadomości</button>
+   			</a>
+  
+	<a th:href="@{/user/changeEmail}">Zmien email</a>
+	
+      <br/><br/>
+	<a th:href="@{/user/deleteAccount}">
+   				<button type="button" class="btn btn-danger">Usuń konto użytkownika</button>
+   			</a>
+</div>
+</body>
+</html>

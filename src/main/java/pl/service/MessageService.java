@@ -24,6 +24,6 @@ public class MessageService {
     }
 
     public Optional<Message> findMessageById(long id) {
-        return messageRepository.findOneById(id);
+        return messageRepository.findOneByIdmessage(id);
     }
 }

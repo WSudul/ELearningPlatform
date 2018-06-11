@@ -51,4 +51,33 @@ public class UserController {
         return "login";
     }
 
+    @GetMapping("/user/changeEmail")
+    public String changeEmail(Model model) {
+        User user = new User();
+        user.setPassword("testowe");
+        model.addAttribute("user", new User());
+        return "user/changeEmail";
+    }
+
+    @PostMapping("/user/changeEmail")
+    public String changeEmail(Model model, @ModelAttribute User user,
+                              Principal principal) {
+        if( principal.getName().equals(user.getEmail()) || ! userService.verifyMail(user.getEmail())
+                || userService.findUserByEmail(user.getEmail()).isPresent())
+            return "user/changeEmail";
+        else {
+            userService.changeEmail(user.getEmail(), principal.getName());
+            return "redirect:/logout";
+        }
+
+    }
+
+    @GetMapping("/user/deleteAccount")
+    public String deleteAccount(Model model, Principal principal) {
+        //User user=userService.findUserByEmail(principal.getName());
+        //userService.deleteUser(user);
+        return "redirect:/logout";
+
+    }
+
 }

@@ -48,6 +48,10 @@ public class UserService {
 
     }
 
+    public int changeEmail(String newEmail, String oldEmail) {
+        return userRepository.changeEmail(newEmail, oldEmail);
+    }
+
     public boolean deactivateUser(Long idUser) {
         try {
             Optional<User> user = userRepository.findById(idUser);

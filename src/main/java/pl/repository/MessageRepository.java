@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
     List<Message> findAllByTowho(String towho);
-
-    Optional<Message> findOneById(long id);
+    //idmessage
+    Optional<Message> findOneByIdmessage(long id);
 }

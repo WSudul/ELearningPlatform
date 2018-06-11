@@ -2,6 +2,7 @@ package pl.web.controller;
 
 
 import java.security.Principal;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,16 +35,17 @@ public class NavbarController {
         this.userService = userService;
     }
 
-   /* private EmailSender emailSender;
+    /*private EmailSender emailSender;
 
     @Autowired
     public void setEmailService(EmailSenderService emailSender) {
         this.emailSender = emailSender;
-    }
+    }*/
 
     @RequestMapping("/user/courses")
     public String courses(Principal principal, Model model) {
-        User user = userService.findUserByEmail(principal.getName());
+        Optional<User> userOpt = userService.findUserByEmail(principal.getName());
+        User user = userOpt.get();
         String role = "";
         Set <UserRole> userRoles = user.getRoles();
         for(UserRole userRole : userRoles) {
@@ -52,18 +54,20 @@ public class NavbarController {
         model.addAttribute("role", role);
         return "user/courses";
     }
+    /*
     @RequestMapping("/user/contact")
     public String contact(Model model) {
         Email email = new Email();
         model.addAttribute("email", email);
         return "user/contact";
-    }
+    } */
     @RequestMapping("/user/account")
     public String account(Principal principal, Model model) {
-        User user = userService.findUserByEmail(principal.getName());
+        Optional<User> userOpt = userService.findUserByEmail(principal.getName());
+        User user = userOpt.get();
         model.addAttribute("user", user);
         return "user/account";
-    }*/
+    }
 
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
