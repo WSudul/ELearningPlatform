@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import pl.model.*;
-import pl.repository.CourseRepository;
-import pl.repository.LessonRepository;
-import pl.repository.QuizRepository;
-import pl.repository.TagRepository;
+import pl.repository.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +19,7 @@ public class CourseService {
     private TagRepository tagRepository;
     private LessonRepository lessonRepository;
     private QuizRepository quizRepository;
+    private QuestionRepository questionRepository;
 
     @Autowired
     public void setCourseRepository(CourseRepository courseRepository) {
@@ -41,6 +39,11 @@ public class CourseService {
     @Autowired
     public void setQuizRepository(QuizRepository quizRepository) {
         this.quizRepository = quizRepository;
+    }
+
+    @Autowired
+    public void setQuestionRepository(QuestionRepository questionRepository) {
+        this.questionRepository = questionRepository;
     }
 
     public boolean addNewCourse(Course course) {
@@ -316,7 +319,6 @@ public class CourseService {
         Optional<Course> course = courseRepository.findById(courseId);
         Optional<Quiz> quiz = quizRepository.findById(quizId);
 
-        //todo : delete questions along with quiz
 
         if (!course.isPresent()) {
             System.out.println("No Course exists with id: " + courseId);
@@ -329,6 +331,11 @@ public class CourseService {
         List<Quiz> quizList = course.get().getQuizes();
 
         if (quizList.contains(quiz.get())) {
+            //delete all question from pointed quiz
+            for (Question question : quiz.get().getQuestions()) {
+                questionRepository.delete(question);
+            }
+
             try {
                 quizRepository.delete(quiz.get());
             } catch (DataAccessException exception) {
@@ -338,6 +345,75 @@ public class CourseService {
 
         } else {
             System.out.println("Quiz : " + quizId + " does not belong to course : " + courseId);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean addQuestionToQuiz(long quizId, String answer1, String answer2, String answer3, String answer4, Long correctAnswer, String questionArg) {
+
+        Optional<Quiz> optionalQuiz = quizRepository.findById(quizId);
+
+        if (!optionalQuiz.isPresent()) {
+            System.out.println("No quiz");
+            return false;
+        } else if (questionArg.isEmpty()) {
+            System.out.println("Question field cannot be empty!");
+            return false;
+        } else if (answer1.isEmpty() || answer2.isEmpty() || answer3.isEmpty() || answer4.isEmpty()) {
+            System.out.println("Answer field cannot be empty!");
+            return false;
+        } else if (null == correctAnswer) {
+            //recommended drop-down menu with <1, 2, 3, 4> in quiz controller
+            System.out.println("Correct answer field has some kind of error!");
+            return false;
+        }
+
+
+        Question question = new Question();
+        question.setAnswer1(answer1);
+        question.setAnswer2(answer2);
+        question.setAnswer3(answer3);
+        question.setAnswer4(answer4);
+        question.setCorrect_answer(correctAnswer);
+        question.setQuest(questionArg);
+
+
+        optionalQuiz.get().getQuestions().add(question);
+        question.setQuiz(optionalQuiz.get());
+
+        try {
+            quizRepository.save(optionalQuiz.get());
+            questionRepository.save(question);
+
+        } catch (DataAccessException exception) {
+            System.out.println("Exception during saving question to quiz: " + exception.getMessage());
+        }
+        return true;
+    }
+
+    public boolean removeQuestionFromQuiz(long quizId, long questionId) {
+        Optional<Quiz> quizOptional = quizRepository.findById(quizId);
+        Optional<Question> questionOptional = questionRepository.findById(questionId);
+
+        if (!quizOptional.isPresent()) {
+            System.out.println("No Quiz exists with id: " + quizId);
+            return false;
+        } else if (!questionOptional.isPresent()) {
+            System.out.println("No Question exists with id: " + questionId);
+            return false;
+        }
+        List<Question> questionList = quizOptional.get().getQuestions();
+
+        if (questionList.contains(questionOptional.get())) {
+            try {
+                questionRepository.delete(questionOptional.get());
+            } catch (DataAccessException exception) {
+                System.out.println("Exception during deleting Question from Quiz list: " + exception.getMessage());
+                return false;
+            }
+        } else {
+            System.out.println("Question : " + questionId + " does not belong to Quiz: " + quizId);
             return false;
         }
         return true;

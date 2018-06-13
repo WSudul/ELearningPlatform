@@ -10,21 +10,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import pl.model.Course;
-import pl.model.Lesson;
-import pl.model.Quiz;
-import pl.model.Tag;
-import pl.repository.CourseRepository;
-import pl.repository.LessonRepository;
-import pl.repository.QuizRepository;
-import pl.repository.TagRepository;
+import pl.model.*;
+import pl.repository.*;
 import pl.service.config.TestConfig;
 
 import java.util.*;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -43,6 +39,8 @@ public class CourseServiceTest {
     private LessonRepository lessonRepository;
     @MockBean
     private QuizRepository quizRepository;
+    @MockBean
+    private QuestionRepository questionRepository;
 
     private Set<Tag> tagSet_1 = new HashSet<>();
     private Course course = new Course();
@@ -352,5 +350,95 @@ public class CourseServiceTest {
         given(this.courseRepository.findById(courseId)).willReturn(Optional.of(course));
         given(this.quizRepository.findById(quizId)).willReturn(Optional.empty());
         assertFalse(courseService.removeQuiz(courseId, quizId));
+    }
+
+    private Quiz quiz = new Quiz();
+    private final long quizId = 123;
+    private final String quizName = "tacticalName";
+    private String questionArg = "W ktorym roku byla bitwa pod grunwaldem?";
+    private String ans1 = "666";
+    private String ans2 = "1410";
+    private String ans3 = "966";
+    private String ans4 = "1527";
+    private Long correctAnsw = 2L;
+
+    @Test
+    public void addQuestionToQuiz() {
+        Question question = new Question();
+        question.setQuest(questionArg);
+        question.setAnswer1(ans1);
+        question.setAnswer2(ans2);
+        question.setAnswer3(ans3);
+        question.setAnswer4(ans4);
+        question.setCorrect_answer(correctAnsw);
+
+        quiz.setName(quizName);
+        quiz.setCourse(course);
+        quiz.getQuestions().add(question);
+
+        given(this.quizRepository.findById(quizId)).willReturn(Optional.of(quiz));
+        given(this.questionRepository.save(notNull())).willReturn(question);
+        given(this.quizRepository.save(quiz)).willReturn(quiz);
+
+        assertTrue(courseService.addQuestionToQuiz(quizId, ans1, ans2, ans3, ans4, correctAnsw, questionArg));
+
+        verify(quizRepository, Mockito.times(1)).save(quiz);
+        verify(questionRepository, Mockito.times(1)).save(notNull());
+        verify(quizRepository, Mockito.times(1)).findById(quizId);
+    }
+
+    @Test
+    public void addQuestionToQuiz_fails_no_answer() {
+        given(this.quizRepository.findById(quizId)).willReturn(Optional.of(quiz));
+        assertFalse(courseService.addQuestionToQuiz(quizId, "", "", "", "", correctAnsw, questionArg));
+
+        verify(quizRepository, Mockito.times(1)).findById(quizId);
+    }
+
+    @Test
+    public void addQuestionToQuiz_fails_no_question() {
+        given(this.quizRepository.findById(quizId)).willReturn(Optional.of(quiz));
+        assertFalse(courseService.addQuestionToQuiz(quizId, ans1, ans2, ans3, ans4, correctAnsw, ""));
+
+        verify(quizRepository, Mockito.times(1)).findById(quizId);
+    }
+
+    @Test
+    public void addQuestionToQuiz_fails_no_quiz() {
+        assertFalse(courseService.addQuestionToQuiz(quizId, ans1, ans2, ans3, ans4, correctAnsw, questionArg));
+    }
+
+    @Test
+    public void removeQuestionFromQuiz() {
+        long questionId = 321;
+
+        Question question = new Question();
+        quiz.getQuestions().add(question);
+
+        given(this.quizRepository.findById(quizId)).willReturn(Optional.of(quiz));
+        given(this.questionRepository.findById(questionId)).willReturn(Optional.of(question));
+
+        assertTrue(courseService.removeQuestionFromQuiz(quizId, questionId));
+    }
+
+    @Test
+    public void removeQuestionFromQuiz_fails_no_quiz() {
+        long questionId = 321;
+        Question question = new Question();
+
+        given(this.quizRepository.findById(quizId)).willReturn(Optional.empty());
+        given(this.questionRepository.findById(questionId)).willReturn(Optional.of(question));
+
+        assertFalse(courseService.removeQuestionFromQuiz(quizId, questionId));
+    }
+
+    @Test
+    public void removeQuestionFromQuiz_fails_no_question() {
+        long questionId = 321;
+
+        given(this.quizRepository.findById(quizId)).willReturn(Optional.of(quiz));
+        given(this.questionRepository.findById(questionId)).willReturn(Optional.empty());
+
+        assertFalse(courseService.removeQuestionFromQuiz(quizId, questionId));
     }
 }

@@ -1,8 +1,10 @@
 package pl.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import pl.model.Course;
+import pl.model.Question;
 import pl.model.Quiz;
 import pl.repository.QuestionRepository;
 import pl.repository.QuizRepository;
@@ -31,4 +33,6 @@ public class QuizService {
     public List<Quiz> findQuizByCourse(Course course) {
         return quizRepository.findByCourse(course);
     }
+
+
 }
