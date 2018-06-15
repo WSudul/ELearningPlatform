@@ -42,17 +42,17 @@
   	<div th:switch="${role}">
   		<div th:case="ROLE_ADMIN">
    		<a th:href="@{/user/manageUsers}">Zarządzaj użytkownikami</a><br/>	
-   		<a th:href="@{/user/deleteSubjects}">Usuń przedmiot</a><br/>
+   		<a th:href="@{/user/deleteCourses}">Usuń przedmiot</a><br/>
    		</div>
 	</div>
 	
 	
 	<div th:switch="${role}">
-   		<a th:case="ROLE_TEACHER" th:href="@{/user/addSubject}">Dodaj przedmiot</a><br/>
+   		<a th:case="ROLE_TEACHER" th:href="@{/user/addCourse}">Dodaj przedmiot</a><br/>
 	</div>
 	
 
-	<a th:href="@{/user/allSubjects}">Wyświetl wszystkie przedmioty</a>
+	<a th:href="@{/user/allCourses}">Wyświetl wszystkie przedmioty</a>
 
   </div>
 </div>
