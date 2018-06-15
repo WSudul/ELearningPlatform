@@ -98,7 +98,6 @@ public class LessonController {
 */
     @GetMapping("/user/allLessons")
     public String showLessonsInCourse(@RequestParam(defaultValue="1") String idCourse, Model model, Principal principal) {
-        //DODANIE ZNALEZIENIA ROLI UZYTKOWNIKA W DANYM PRZEDMIOCIE
         currentIdCourse = idCourse;
         Optional<User> userOpt =userService.findUserByEmail(principal.getName());
         User user = userOpt.get();
@@ -107,13 +106,9 @@ public class LessonController {
         if(!access.isEmpty()) {
 
             currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
-            //System.out.println(currentAccessRole.getRole());
         } else {
             currentAccessRole = userService.findRoleById(ROLE_USER_ID).get();
-            //System.out.println(currentAccessRole.getRole());
         }
-//			quizService.findAllQuizesForSubject(Long.parseLong(currentIdSubject, 10));
-
 
         model.addAttribute("idCourse", currentIdCourse);
         model.addAttribute("currentAccessRole", currentAccessRole.getRole());
@@ -122,8 +117,6 @@ public class LessonController {
         return "user/allLessons";
     }
 
-
-    //TO JESZCZE W PANELU NAUCZYCIELA!
     @GetMapping("/user/addUserToCourse")
     public String addUserToCourse(@RequestParam(defaultValue="1") String idUser, Model model, Principal principal) {
         User user =userService.findUserById(Long.parseLong(idUser, 10));
@@ -131,7 +124,6 @@ public class LessonController {
         if(accesses.isEmpty()) { //oznacza że rola to ROLE_USER - zarejestrowany uzytkownik bez specjalnych praw
             Access access = new Access(user.getId(), ROLE_STUDENT_ID,currentCourse.getId());
             accessService.addNewAccess(access);
-            //dodanie do access(userid,roleid=204Taa,subjectid)
         } else {
             System.out.println("ROLA Z WYZSZYM DOSTEPEM");
         }
@@ -159,20 +151,13 @@ public class LessonController {
             model.addAttribute("currentCourse", courseService.findCourseById(Long.parseLong(currentIdCourse, 10)));
             lessonService.addNewLessons(lesson);
             model.addAttribute("idCourse", currentIdCourse);
-            //DODANE TESTOWO!
             User user =userService.findUserByEmail(principal.getName()).get();
             List<Access> access = accessService.findAccess(user.getId(), Long.parseLong(currentIdCourse, 10));
             if(!access.isEmpty()) {
-
                 currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
-                //System.out.println(currentAccessRole.getRole());
             } else {
                 currentAccessRole = userService.findRoleById(ROLE_USER_ID).get();
-                //System.out.println(currentAccessRole.getRole());
             }
-//    			quizService.findAllQuizesForSubject(Long.parseLong(currentIdSubject, 10));
-
-
             model.addAttribute("idCourse", currentIdCourse);
             model.addAttribute("currentAccessRole", currentAccessRole.getRole());
             currentCourse = courseService.findCourseById(Long.parseLong(currentIdCourse, 10)).get();
@@ -183,21 +168,21 @@ public class LessonController {
 
     @GetMapping("/user/addUsersToCourse")
     public String addUsersToCourse(Model model) {
-
-
-        //ZNAJDZ USER_ID WSZYSTKICH Z ROLA STUDENTA I Z ID PRZEDMIOTU currentIdCourse
-        //ZNAJDZ WSZYSTKICH UZYTKOWNIKOW O PODANYCH ID!
         List<RequestAccess> accesses = requestAccessService.findAccessWithUsers(ROLE_STUDENT_ID, Long.parseLong(currentIdCourse, 10));
         List<User> allStudentsJoiningCourse = new LinkedList<>();
         for(RequestAccess access : accesses) {
-            //METODA
             System.out.println(access.getUserid());
             allStudentsJoiningCourse.add(userService.findUserById(access.getUserid()));
         }
         model.addAttribute("allUsers", allStudentsJoiningCourse );
         System.out.println(currentIdCourse);
         model.addAttribute("idCourse", currentIdCourse);
-        //model.addAttribute("allUsers", allUsers);
         return "user/addUsersToCourse";
+    }
+    @GetMapping("/user/lesson")
+    public String showLesson(@RequestParam(defaultValue="1") String idLesson, Model model) {
+        model.addAttribute("currentLesson", lessonService.findLessonById(Long.parseLong(idLesson, 10)).get());
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/lesson";
     }
 }
