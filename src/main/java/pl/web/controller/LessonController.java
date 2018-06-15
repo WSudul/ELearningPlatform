@@ -46,10 +46,12 @@ public class LessonController {
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
+
     @Autowired
     public void setCourseService(CourseService courseService) {
         this.courseService = courseService;
     }
+
     @Autowired
     public void setLessonService(LessonService lessonService) {
         this.lessonService = lessonService;
@@ -120,21 +122,6 @@ public class LessonController {
         return "user/allLessons";
     }
 
-    @GetMapping("/user/userRequestToCourse")
-    public String userRequestToCourse(@RequestParam(defaultValue="1") String idCourse, Model model, Principal principal) {
-        User user =userService.findUserByEmail(principal.getName()).get();
-        //List<Access> accesses = accessService.findAccess(user.getId(), Long.parseLong(idSubject, 10));
-        List<RequestAccess> requestedAccesses = requestAccessService.findRequestAccess(user.getId(), Long.parseLong(idCourse, 10));
-        if(requestedAccesses.isEmpty()) { //oznacza że rola to ROLE_USER - zarejestrowany uzytkownik bez specjalnych praw
-            RequestAccess access = new RequestAccess(user.getId(),ROLE_STUDENT_ID,Long.parseLong(idCourse, 10));
-            requestAccessService.addNewAccess(access);
-            //dodanie do access(userid,roleid=204Taa,subjectid)
-        } else {
-            System.out.println("ROLA Z WYZSZYM DOSTEPEM");
-        }
-        return "user/home";
-    }
-
 
     //TO JESZCZE W PANELU NAUCZYCIELA!
     @GetMapping("/user/addUserToCourse")
@@ -151,7 +138,7 @@ public class LessonController {
         return "user/home";
     }
 
-    /*
+
     @GetMapping("/user/addNewLesson")
     public String addLesson(Model model) {
         System.out.println(currentIdCourse);
@@ -168,6 +155,7 @@ public class LessonController {
             return "user/addNewLesson";
         else {
             lesson.setCourse(currentCourse);
+            System.out.println("Lekcja: nazwa :"+lesson.getName()+"zawartosc:"+lesson.getContent()+" "+lesson.getCourse().getName());
             model.addAttribute("currentCourse", courseService.findCourseById(Long.parseLong(currentIdCourse, 10)));
             lessonService.addNewLessons(lesson);
             model.addAttribute("idCourse", currentIdCourse);
@@ -179,19 +167,19 @@ public class LessonController {
                 currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
                 //System.out.println(currentAccessRole.getRole());
             } else {
-                currentAccessRole = userService.findRoleById(201L).get();
+                currentAccessRole = userService.findRoleById(ROLE_USER_ID).get();
                 //System.out.println(currentAccessRole.getRole());
             }
 //    			quizService.findAllQuizesForSubject(Long.parseLong(currentIdSubject, 10));
 
 
-            model.addAttribute("idSubject", currentIdCourse);
+            model.addAttribute("idCourse", currentIdCourse);
             model.addAttribute("currentAccessRole", currentAccessRole.getRole());
             currentCourse = courseService.findCourseById(Long.parseLong(currentIdCourse, 10)).get();
             model.addAttribute("currentCourse", currentCourse);
             return "user/allLessons";
         }
-    } */
+    }
 
     @GetMapping("/user/addUsersToCourse")
     public String addUsersToCourse(Model model) {

@@ -7,11 +7,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import pl.model.*;
-import pl.service.AccessService;
-import pl.service.CourseGradeService;
-import pl.service.CourseService;
-import pl.service.UserService;
+import pl.service.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -28,7 +26,9 @@ public class CourseController {
     private AccessService accessService;
     //private LessonService lessonService;
     private CourseGradeService courseGradeService;
+    private RequestAccessService requestAccessService;
     private final long ROLE_TEACHER_ID = 2;
+    private final long ROLE_STUDENT_ID = 4;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -47,6 +47,11 @@ public class CourseController {
     @Autowired
     public void setCourseGradeService(CourseGradeService courseGradeService) {
         this.courseGradeService = courseGradeService;
+    }
+
+    @Autowired
+    public void setRequestAccessService(RequestAccessService requestAccessService) {
+        this.requestAccessService = requestAccessService;
     }
 
     @GetMapping("/user/addCourse")
@@ -129,5 +134,20 @@ public class CourseController {
         model.addAttribute("allSubjects", allSubjects);
         return "user/deleteSubjects";
     }*/
+
+    @GetMapping("/user/userRequestToCourse")
+    public String userRequestToCourse(@RequestParam(defaultValue="1") String idCourse, Model model, Principal principal) {
+        User user =userService.findUserByEmail(principal.getName()).get();
+        //List<Access> accesses = accessService.findAccess(user.getId(), Long.parseLong(idSubject, 10));
+        List<RequestAccess> requestedAccesses = requestAccessService.findRequestAccess(user.getId(), Long.parseLong(idCourse, 10));
+        if(requestedAccesses.isEmpty()) { //oznacza że rola to ROLE_USER - zarejestrowany uzytkownik bez specjalnych praw
+            RequestAccess access = new RequestAccess(user.getId(),ROLE_STUDENT_ID,Long.parseLong(idCourse, 10));
+            requestAccessService.addNewAccess(access);
+            //dodanie do access(userid,roleid=204Taa,subjectid)
+        } else {
+            System.out.println("ROLA Z WYZSZYM DOSTEPEM");
+        }
+        return "user/home";
+    }
 
 }

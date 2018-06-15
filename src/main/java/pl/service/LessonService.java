@@ -1,5 +1,6 @@
 package pl.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.model.Course;
 import pl.model.Lesson;
@@ -14,6 +15,7 @@ public class LessonService {
 
     private LessonRepository lessonRepository;
 
+    @Autowired
     public void setLessonRepository(LessonRepository lessonRepository) { this.lessonRepository = lessonRepository; }
 
     public List<Lesson> findAllLessons() {
@@ -26,6 +28,10 @@ public class LessonService {
 
     public List<Lesson> findLessonByCourse(Course course) {
         return lessonRepository.findAllByCourse(course);
+    }
+
+    public void addNewLessons(Lesson lesson) {
+        lessonRepository.save(lesson);
     }
 
 }
