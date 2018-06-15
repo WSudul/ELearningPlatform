@@ -1,5 +1,6 @@
 package pl.web.controller;
 
+import ch.qos.logback.core.CoreConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,7 @@ import pl.service.*;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +29,8 @@ public class LessonController {
     private int questionNr = 0;
     private List<String> answers = new ArrayList<>();
     private String studentEmail;
+    private final long ROLE_USER_ID = 1;
+    private final long ROLE_STUDENT_ID = 4;
 
     private UserService userService;
     private CourseService courseService;
@@ -97,12 +101,13 @@ public class LessonController {
         Optional<User> userOpt =userService.findUserByEmail(principal.getName());
         User user = userOpt.get();
         List<Access> access = accessService.findAccess(user.getId(), Long.parseLong(currentIdCourse, 10));
+        System.out.println("access:"+access.get(0).getRoleid());
         if(!access.isEmpty()) {
 
             currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
             //System.out.println(currentAccessRole.getRole());
         } else {
-            currentAccessRole = userService.findRoleById(201L).get();
+            currentAccessRole = userService.findRoleById(ROLE_USER_ID).get();
             //System.out.println(currentAccessRole.getRole());
         }
 //			quizService.findAllQuizesForSubject(Long.parseLong(currentIdSubject, 10));
@@ -116,12 +121,12 @@ public class LessonController {
     }
 
     @GetMapping("/user/userRequestToCourse")
-    public String userRequestToCourse(@RequestParam(defaultValue="1") String idSubject, Model model, Principal principal) {
+    public String userRequestToCourse(@RequestParam(defaultValue="1") String idCourse, Model model, Principal principal) {
         User user =userService.findUserByEmail(principal.getName()).get();
         //List<Access> accesses = accessService.findAccess(user.getId(), Long.parseLong(idSubject, 10));
-        List<RequestAccess> requestedAccesses = requestAccessService.findRequestAccess(user.getId(), Long.parseLong(idSubject, 10));
+        List<RequestAccess> requestedAccesses = requestAccessService.findRequestAccess(user.getId(), Long.parseLong(idCourse, 10));
         if(requestedAccesses.isEmpty()) { //oznacza że rola to ROLE_USER - zarejestrowany uzytkownik bez specjalnych praw
-            RequestAccess access = new RequestAccess(user.getId(),204L,Long.parseLong(idSubject, 10));
+            RequestAccess access = new RequestAccess(user.getId(),ROLE_STUDENT_ID,Long.parseLong(idCourse, 10));
             requestAccessService.addNewAccess(access);
             //dodanie do access(userid,roleid=204Taa,subjectid)
         } else {
@@ -137,7 +142,7 @@ public class LessonController {
         User user =userService.findUserById(Long.parseLong(idUser, 10));
         List<Access> accesses = accessService.findAccess(user.getId(), currentCourse.getId());
         if(accesses.isEmpty()) { //oznacza że rola to ROLE_USER - zarejestrowany uzytkownik bez specjalnych praw
-            Access access = new Access(user.getId(),204L,currentCourse.getId());
+            Access access = new Access(user.getId(), ROLE_STUDENT_ID,currentCourse.getId());
             accessService.addNewAccess(access);
             //dodanie do access(userid,roleid=204Taa,subjectid)
         } else {
@@ -187,4 +192,24 @@ public class LessonController {
             return "user/allLessons";
         }
     } */
+
+    @GetMapping("/user/addUsersToCourse")
+    public String addUsersToCourse(Model model) {
+
+
+        //ZNAJDZ USER_ID WSZYSTKICH Z ROLA STUDENTA I Z ID PRZEDMIOTU currentIdCourse
+        //ZNAJDZ WSZYSTKICH UZYTKOWNIKOW O PODANYCH ID!
+        List<RequestAccess> accesses = requestAccessService.findAccessWithUsers(ROLE_STUDENT_ID, Long.parseLong(currentIdCourse, 10));
+        List<User> allStudentsJoiningCourse = new LinkedList<>();
+        for(RequestAccess access : accesses) {
+            //METODA
+            System.out.println(access.getUserid());
+            allStudentsJoiningCourse.add(userService.findUserById(access.getUserid()));
+        }
+        model.addAttribute("allUsers", allStudentsJoiningCourse );
+        System.out.println(currentIdCourse);
+        model.addAttribute("idCourse", currentIdCourse);
+        //model.addAttribute("allUsers", allUsers);
+        return "user/addUsersToCourse";
+    }
 }
