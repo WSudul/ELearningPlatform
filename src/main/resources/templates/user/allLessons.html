@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+  <title>Lekcje</title>
+  <meta charset="utf-8"></meta>
+  <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"></link>
+  <link rel="stylesheet" type="text/css" href="../css/styles.css"></link>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">E-learning</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a th:href="@{/user/home}">Home</a></li>
+        <li><a th:href="@{/user/courses}">Kursy</a></li>
+        <li><a th:href="@{/user/contact}">Kontakt</a></li>
+        <li><a th:href="@{/user/account}">Moje konto</a></li>
+        <li><a th:href="@{/logout}"><img th:src="@{../images/wyloguj.png}" src="../images/wyloguj.png" alt="Wyloguj" style="height: 30px; width: 30px" onmouseover="this.src='../images/wyloguj2.png'" onmouseout="this.src='../images/wyloguj.png'"/></a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- First Container -->
+<div class="container-fluid bg-3 text-center">
+   
+  <h3 class="margin">Lekcje:</h3>
+  <div th:switch="${currentAccessRole}">
+  	<div th:case="ROLE_TEACHER">
+	   <a th:href="@{/user/addNewLesson(idCourse=${idCourse})}">Dodaj nową lekcję</a><br/>
+	   <a th:href="@{/user/deleteLessons}">Usuń lekcję</a><br/>
+	    <a th:href="@{/user/addNewQuiz(idCourse=${idCourse})}">Dodaj nowy quiz</a><br/>
+	   <a th:href="@{/user/insertGrade}">Oceń pracę podopiecznych</a><br/>
+	    <a th:href="@{/user/receiveMessage}">Przejrzyj wiadomości od uczniów</a><br/>
+	   <a th:href="@{/user/usersOfCourse}">Zarządzaj użytkownikami kursu</a><br/>
+	   <a th:href="@{/user/addUsersToCourse}">Udziel dostęp do kursu użytkownikom</a><br/>
+	   <a th:href="@{/user/statistics}">Statystyki</a><br/>
+	   <h1 th:text="${currentCourse.getName()}">Aktualny przedmiot</h1>
+    
+    <div class="panel panel-primary" th:each="lesson: ${currentCourse.getLessons()}" th:object="${lesson}">
+   		<div class="panel-heading text-left">
+   			<a th:href="@{/user/lesson(idLesson=${lesson.getIdLesson()})}" style="color:white;text-decoration: none;">
+   				<span th:text="*{name}">Nazwa</span>
+   			</a>
+
+   		</div>
+   	</div>
+   	
+  		<div class="panel panel-success" th:each="quiz: ${currentCourse.getQuizes()}" th:object="${quiz}">
+   		<div class="panel-heading text-left">
+   			<a th:href="@{/user/quiz(idQuiz=${quiz.getIdQuiz()})}" style="text-decoration: none;">
+   			<span th:text="*{name}">Nazwa</span>
+   			</a>
+   		</div>
+   	</div>
+   </div>
+   	<div th:case="ROLE_STUDENT">
+   		<a th:href="@{/user/sendMessage}">Wyślij wiadomość do nauczyciela</a><br/>
+   		<a th:href="@{/user/checkGrades}">Zdobyte oceny</a><br/>
+   		<a th:href="@{/user/statistics}">Statystyki</a><br/>
+   		<h1 th:text="${currentCourse.getName()}">Aktualny przedmiot</h1>
+    
+   		<div class="panel panel-primary" th:each="lesson: ${currentCourse.getLessons()}" th:object="${lesson}">
+   			<div class="panel-heading text-left">
+   				<a th:href="@{/user/lesson(idLesson=${lesson.getIdLesson()})}" style="color:white;text-decoration: none;">
+   					<span th:text="*{name}">Nazwa</span>
+   				</a>
+   			</div>
+   		</div>
+   		
+  		<div class="panel panel-success" th:each="quiz: ${currentCourse.getQuizes()}" th:object="${quiz}">
+   		<div class="panel-heading text-left">
+   			<a th:href="@{/user/quiz(idQuiz=${quiz.getIdQuiz()})}" style="text-decoration: none;">
+   			<span th:text="*{name}">Nazwa</span>
+   			</a>
+   		</div>
+   	</div>
+   	</div>
+   	<div th:case="ROLE_USER">
+   		<h1 th:text="${currentCourse.getName()}">Aktualny przedmiot</h1>
+   		<h3>Brak dostępu do kursu!</h3>
+ 
+    </div>
+  </div>
+  
+  
+  
+   <a th:href="@{/user/home}">Wróć do strony głównej</a>
+</div>
+
+
+
+<!-- Footer -->
+<footer class="container-fluid bg-4 text-center">
+  <p>2017 Elearning platform</p> 
+</footer>
+
+</body>
+</html>

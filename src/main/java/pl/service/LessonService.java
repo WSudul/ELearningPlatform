@@ -1,5 +1,6 @@
 package pl.service;
 
+import org.springframework.stereotype.Service;
 import pl.model.Course;
 import pl.model.Lesson;
 import pl.repository.LessonRepository;
@@ -8,6 +9,7 @@ import pl.repository.LessonRepository;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class LessonService {
 
     private LessonRepository lessonRepository;

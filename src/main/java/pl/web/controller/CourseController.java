@@ -28,6 +28,7 @@ public class CourseController {
     private AccessService accessService;
     //private LessonService lessonService;
     private CourseGradeService courseGradeService;
+    private final long ROLE_TEACHER_ID = 2;
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -60,15 +61,19 @@ public class CourseController {
         if(bindResult.hasErrors())
             return "user/addNewCourse";
         else {
-            /*Set<Tag> tagSet_1 = new HashSet<>();
+            /*
             String tag_1 = "tag_1";
             tagSet_1.add(new Tag(tag_1));*/
-            Set<Tag> tags = course.getTagSet();
-            String tag = tags.toString();
-            System.out.println(tag);
-            //course.setTagSet(tagSet_1);
+            Set<Tag> tagSet = new HashSet<>();
+            System.out.println(course.getTags());
+            String[] courseTags = course.getTags().split(",");
+            for(int i = 0; i< courseTags.length; i++) {
+                tagSet.add(new Tag(courseTags[0].trim()));
+            }
+            System.out.println(tagSet.toString());
+            course.setTagSet(tagSet);
             courseService.addNewCourse(course);
-            Access access = new Access(userService.findUserByEmail(principal.getName()).get().getId(), 202L, course.getId());
+            Access access = new Access(userService.findUserByEmail(principal.getName()).get().getId(), ROLE_TEACHER_ID, course.getId());
             accessService.addNewAccess(access);
 
             Optional<User> userOpt = userService.findUserByEmail(principal.getName());

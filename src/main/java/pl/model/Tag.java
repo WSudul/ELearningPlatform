@@ -57,4 +57,12 @@ public class Tag {
         return name != null ? name.equals(tag.name) : tag.name == null;
     }
 
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", courseSet=" + courseSet +
+                '}';
+    }
 }

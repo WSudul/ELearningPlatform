@@ -48,6 +48,14 @@ public class UserService {
 
     }
 
+    public Optional<UserRole> findRoleById(Long id) {
+        return roleRepository.findById(id);
+    }
+
+    public User findUserById(Long id) {
+        return userRepository.getOne(id);
+    }
+
     public int changeEmail(String newEmail, String oldEmail) {
         return userRepository.changeEmail(newEmail, oldEmail);
     }

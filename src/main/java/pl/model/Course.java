@@ -24,6 +24,10 @@ public class Course {
     private String description;
     @NotEmpty
     private String name;
+
+    @NotEmpty
+    private String tags;
+
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "course_tags",
             joinColumns = {@JoinColumn(name = "course_id")},
@@ -152,5 +156,13 @@ public class Course {
 
     public void setUsercourses(Set<Usercourses> usercourses) {
         this.usercourses = usercourses;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }
