@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import pl.model.*;
 import pl.repository.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -50,7 +49,9 @@ public class CourseService {
 
         if (null != course && validateCourse(course)) {
             try {
-                SetValidTagsInCourse(course);
+                if (!course.getTagSet().isEmpty())
+                    SetValidTagsInCourse(course);
+
                 courseRepository.save(course);
                 return true;
             } catch (DataAccessException exception) {
@@ -71,22 +72,24 @@ public class CourseService {
         tagNames.removeAll(existingNames); //avoid duplications
 
         course.setTagSet(existingTags);
-        addStringTagsToCourse(tagNames, course);
+        createTagsAndAssignToCourse(tagNames, course);
 
         System.out.println("course tags after validation: "+course.getTagSet());
     }
 
-    private void addStringTagsToCourse(Set<String> tagNames, Course course) {
-        if (!tagNames.isEmpty()) {
-            Set<Tag> newTags
-                    = tagNames.stream().map(name -> {
-                Tag tag = new Tag(name.toLowerCase());
-                tag.getCourseSet().add(course);
-                System.out.println("DEBUG  creating tag: "+ tag);
-                return tag;
-            }).collect(Collectors.toSet());
-            course.getTagSet().addAll(newTags);
-        }
+    private Set<Tag> createTagsAndAssignToCourse(Set<String> tagNames, Course course) {
+        Set<Tag> newTags
+                = tagNames.stream().map(name -> {
+            Tag tag = new Tag(name.toLowerCase());
+            tag.getCourseSet().add(course);
+            System.out.println("DEBUG  creating tag: " + tag);
+            return tag;
+        }).collect(Collectors.toSet());
+
+        course.getTagSet().addAll(newTags);
+
+        return newTags;
+
     }
 
     public boolean addTagsToCourse(long courseId, Set<Tag> tags) {
@@ -104,10 +107,11 @@ public class CourseService {
         Set<String> names = extractTagNames(tags); //extract string names of provided tags
         System.out.println("names originaly to add="+names);
         Set<Tag> existingTags = tagRepository.findAllByNameInIgnoreCase(names); //find already existing tags
-
+        System.out.println("existing tags= " + existingTags.toString());
         Set<String> existingNames = extractTagNames(existingTags);
-        System.out.println();
+
         names.removeAll(existingNames);
+        System.out.println("names.removeAll(existingNames);=" + names);
 
         if (!existingTags.isEmpty()) {
             course.getTagSet().addAll(existingTags);
@@ -115,14 +119,22 @@ public class CourseService {
                 if (!tag.getCourseSet().add(course))
                     System.out.println("Tag " + tag.getName() + " already exists in course: " + course.getName());
             }
+            try {
+                courseRepository.save(course);
+            } catch (DataAccessException e) {
+                System.out.println("saving course with new tags failed " + e.getMessage());
+                return false;
+            }
+
         }
-        addStringTagsToCourse(names, course);
+
 
         try {
-            tagRepository.saveAll(course.getTagSet());
+            Set<Tag> newTags = createTagsAndAssignToCourse(names, course);
+            tagRepository.saveAll(newTags);
         }catch(DataAccessException e)
         {
-            System.out.println("saving course with new tags failed"+e.getMessage());
+            System.out.println("saving tags to new course failed " + e.getMessage());
             return false;
         }
         return true;
@@ -195,7 +207,7 @@ public class CourseService {
     }
 
     private Set<String> extractTagNames(Set<Tag> tags) {
-        return tags.stream().map(Tag::getName).collect(Collectors.toSet());
+        return tags.stream().map(tag -> tag.getName().toLowerCase()).collect(Collectors.toSet());
     }
 
     public boolean addLessonToCourse(long courseId, String lessonName, String lessonContent) {
