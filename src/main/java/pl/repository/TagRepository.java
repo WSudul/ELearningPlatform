@@ -11,5 +11,5 @@ import java.util.Set;
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
 
-    Set<Tag> findAllByNameLikeIgnoreCase(Set<String> names);
+    Set<Tag> findAllByNameInIgnoreCase(Set<String> names);
 }

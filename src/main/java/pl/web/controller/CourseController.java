@@ -66,18 +66,22 @@ public class CourseController {
         if(bindResult.hasErrors())
             return "user/addNewCourse";
         else {
-            /*
-            String tag_1 = "tag_1";
-            tagSet_1.add(new Tag(tag_1));*/
+            System.out.println("DEBUG: start");
             Set<Tag> tagSet = new HashSet<>();
             System.out.println(course.getTags());
             String[] courseTags = course.getTags().split(",");
             for(int i = 0; i< courseTags.length; i++) {
-                tagSet.add(new Tag(courseTags[0].trim()));
+                System.out.println("DEBUG: courseTags[i]= "+courseTags[i]);
+                tagSet.add(new Tag(courseTags[i].trim()));
             }
-            System.out.println(tagSet.toString());
-            course.setTagSet(tagSet);
-            courseService.addNewCourse(course);
+            System.out.println("DEBUG: tagSet= "+ tagSet.toString());
+            //course.setTagSet(tagSet);
+            if(courseService.addNewCourse(course))
+            {
+                System.out.println("DEBUG: course added succesfuly: "+course.getId());
+                courseService.addTagsToCourse(course,tagSet);
+            }
+
             Access access = new Access(userService.findUserByEmail(principal.getName()).get().getId(), ROLE_TEACHER_ID, course.getId());
             accessService.addNewAccess(access);
 

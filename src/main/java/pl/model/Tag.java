@@ -3,6 +3,7 @@ package pl.model;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "tag")
@@ -62,7 +63,7 @@ public class Tag {
         return "Tag{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", courseSet=" + courseSet +
+                ", courseSet=" + courseSet.stream().map(Course::getName).collect(Collectors.toList()) +
                 '}';
     }
 }

@@ -54,7 +54,7 @@ public class CourseService {
                 courseRepository.save(course);
                 return true;
             } catch (DataAccessException exception) {
-                System.out.println(exception.getMessage());
+                System.out.println("Exception caught while saving course: " + exception.getMessage());
                 return false;
             }
         } else
@@ -65,13 +65,15 @@ public class CourseService {
     private void SetValidTagsInCourse(Course course) {
         Set<String> tagNames = extractTagNames(course.getTagSet());
 
-        Set<Tag> existingTags = tagRepository.findAllByNameLikeIgnoreCase(tagNames);
+        Set<Tag> existingTags = tagRepository.findAllByNameInIgnoreCase(tagNames);
         Set<String> existingNames = extractTagNames(existingTags);
 
         tagNames.removeAll(existingNames); //avoid duplications
 
         course.setTagSet(existingTags);
         addStringTagsToCourse(tagNames, course);
+
+        System.out.println("course tags after validation: "+course.getTagSet());
     }
 
     private void addStringTagsToCourse(Set<String> tagNames, Course course) {
@@ -80,6 +82,7 @@ public class CourseService {
                     = tagNames.stream().map(name -> {
                 Tag tag = new Tag(name.toLowerCase());
                 tag.getCourseSet().add(course);
+                System.out.println("DEBUG  creating tag: "+ tag);
                 return tag;
             }).collect(Collectors.toSet());
             course.getTagSet().addAll(newTags);
@@ -97,13 +100,14 @@ public class CourseService {
     }
 
     public boolean addTagsToCourse(Course course, Set<Tag> tags) {
-
+        System.out.println(course.toString() +"\ntags="+tags.toString());
         Set<String> names = extractTagNames(tags); //extract string names of provided tags
+        System.out.println("names originaly to add="+names);
+        Set<Tag> existingTags = tagRepository.findAllByNameInIgnoreCase(names); //find already existing tags
 
-        Set<Tag> existingTags = tagRepository.findAllByNameLikeIgnoreCase(names); //find already existing tags
         Set<String> existingNames = extractTagNames(existingTags);
-
-        names.removeAll(existingNames); //avoid duplications
+        System.out.println();
+        names.removeAll(existingNames);
 
         if (!existingTags.isEmpty()) {
             course.getTagSet().addAll(existingTags);
@@ -114,8 +118,13 @@ public class CourseService {
         }
         addStringTagsToCourse(names, course);
 
-        courseRepository.save(course);
-
+        try {
+            tagRepository.saveAll(course.getTagSet());
+        }catch(DataAccessException e)
+        {
+            System.out.println("saving course with new tags failed"+e.getMessage());
+            return false;
+        }
         return true;
     }
 

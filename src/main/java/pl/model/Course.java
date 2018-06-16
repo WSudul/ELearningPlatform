@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "course")
@@ -25,7 +26,7 @@ public class Course {
     @NotEmpty
     private String name;
 
-    @NotEmpty
+    //@NotEmpty
     private String tags;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
@@ -164,5 +165,16 @@ public class Course {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", name='" + name + '\'' +
+                ", tagSet=" + tagSet.stream().map(Tag::getName).collect(Collectors.toList()) +
+                '}';
     }
 }
