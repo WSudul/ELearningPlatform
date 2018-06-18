@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pl">
 <head>
-    <title>Dodaj nowy quiz</title>
+    <title>Lekcja</title>
     <meta charset="utf-8"></meta>
     <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
@@ -37,19 +37,14 @@
 
 <!-- First Container -->
 <div class="container-fluid bg-3 text-center">
-
-    <h3>Dodaj nowy quiz</h3><br/>
-    <form id="addQuiz" action="#" method="post" th:action="@{/user/addNewQuiz}" th:object="${quiz}" >
-        <input th:field="*{name}" placeholder="Nazwa quizu" style="padding: 5px"/><br/><br/>
-        <!-- <label class="labels" for="tresc">Treść lekcji:</label><br />
-         <input type="text" th:field="*{content}" placeholder="Treść lekcji" style="padding: 5px"/><br/><br/>-->
-        <input type="submit" value="Dodaj quiz" />
-    </form><br/>
+    <h1 th:text="${currentLesson.getName()}">Aktualna lekcja</h1>
+    <div  style="text-align: justify; font-size: medium">
+        <p th:text="${currentLesson.getContent()}">Aktualna tresc</p>
+    </div>
+    <br/>
     <a th:href="@{/user/allLessons(idCourse=${idCourse})}">
-        <button type="button" class="btn btn-warning">Powrót</button>
+        <button type="button" class="btn btn-warning">Zakończ lekcje</button>
     </a>
-
-
 
 </div>
 

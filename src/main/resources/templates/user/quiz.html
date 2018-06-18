@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pl">
 <head>
-    <title>Dodaj nowy quiz</title>
+    <title>Quiz</title>
     <meta charset="utf-8"></meta>
     <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
@@ -37,19 +37,22 @@
 
 <!-- First Container -->
 <div class="container-fluid bg-3 text-center">
+    <!--     <h1 th:text="${currentLesson.getName()}">Aktualna lekcja</h1>  -->
+    <!--     <p th:text="${currentLesson.getContent()}">Aktualna tresc</p> -->
 
-    <h3>Dodaj nowy quiz</h3><br/>
-    <form id="addQuiz" action="#" method="post" th:action="@{/user/addNewQuiz}" th:object="${quiz}" >
-        <input th:field="*{name}" placeholder="Nazwa quizu" style="padding: 5px"/><br/><br/>
-        <!-- <label class="labels" for="tresc">Treść lekcji:</label><br />
-         <input type="text" th:field="*{content}" placeholder="Treść lekcji" style="padding: 5px"/><br/><br/>-->
-        <input type="submit" value="Dodaj quiz" />
-    </form><br/>
+    <!--      <br/>  -->
+    <h1 th:text="${currentQuiz.getName()}"> Nazwa quizu</h1>
+    <div th:switch="${currentAccessRole}">
+        <div th:case="ROLE_TEACHER">
+            <a th:href="@{/user/addNewQuestions(idCourse=${idCourse})}">Dodaj pytania do quizu</a><br/>
+        </div>
+        <div th:case="ROLE_STUDENT">
+            <a th:href="@{/user/takeAnQuiz(idCourse=${idCourse})}">Podejdź do quizu</a><br/>
+        </div>
+    </div>
     <a th:href="@{/user/allLessons(idCourse=${idCourse})}">
-        <button type="button" class="btn btn-warning">Powrót</button>
+        <br/><button type="button" class="btn btn-warning">Zakończ quiz</button>
     </a>
-
-
 
 </div>
 

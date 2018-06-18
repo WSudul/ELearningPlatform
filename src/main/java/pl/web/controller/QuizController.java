@@ -28,8 +28,9 @@ public class QuizController {
     private CourseGradeService courseGradeService;
     private MessageService messageService;
     private UserRole currentAccessRole;
+    private Quiz currentQuiz;
     private final long ROLE_USER_ID = 1;
-    private final long ROLE_STUDENT_ID = 4;
+
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -73,7 +74,7 @@ public class QuizController {
 
     
     @GetMapping("/user/addNewQuiz")
-    public String addQuiz(@RequestParam(defaultValue = "1") String idCourse, Model model, Principal principal) {
+    public String addQuiz(@RequestParam(defaultValue = "1") String idCourse, Model model) {
         currentIdCourse = idCourse;
         System.out.println(currentIdCourse);
         model.addAttribute("quiz", new Quiz());
@@ -83,10 +84,9 @@ public class QuizController {
 
     @PostMapping("/user/addNewQuiz")
     public String addQuiz(@ModelAttribute Quiz quiz, Model model, BindingResult bindResult, Principal principal) {
-        if(bindResult.hasErrors() || quiz.getName().equals("")) {
+        if (bindResult.hasErrors() || quiz.getName().equals("")) {
             return "user/addNewQuiz";
-        }
-        else {
+        } else {
             System.out.println("sdd2");
             quiz.setCourse(currentCourse);
             model.addAttribute("currentCourse", courseService.findCourseById(Long.parseLong(currentIdCourse, 10)));
@@ -103,7 +103,6 @@ public class QuizController {
                 currentAccessRole = userService.findRoleById(ROLE_USER_ID).get();
             }
 
-
             model.addAttribute("idCourse", currentIdCourse);
             model.addAttribute("currentAccessRole", currentAccessRole.getRole());
             currentCourse = courseService.findCourseById(Long.parseLong(currentIdCourse, 10)).get();
@@ -111,5 +110,40 @@ public class QuizController {
 
             return "user/allLessons";
         }
+    }
+
+    @GetMapping("/user/quiz")
+    public String showQuiz(@RequestParam(defaultValue="1") String idQuiz, Model model) {
+        currentQuiz = quizService.findQuizById(Long.valueOf(idQuiz)).get();
+
+        model.addAttribute("currentQuiz", currentQuiz);
+        model.addAttribute("idCourse", currentIdCourse);
+        model.addAttribute("currentAccessRole", currentAccessRole.getRole());
+        return "user/quiz";
+    }
+
+    @GetMapping("/user/addNewQuestions")
+    public String addQuestions(Model model) {
+        model.addAttribute("question", new Question());
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/addNewQuestions";
+    }
+
+    @PostMapping("/user/addNewQuestions")
+    public String addQuestionToDataBase(@ModelAttribute Question question, Model model, BindingResult bindResult) {
+        if(bindResult.hasErrors() || question.getQuest().equals("")) {
+            return "user/addNewQuestions";
+        }
+        System.out.println("sdd2");
+        question.setQuiz(currentQuiz);
+        //quiz.setSubject(currentSubject);
+        model.addAttribute("currentSubject", courseService.findCourseById(Long.parseLong(currentIdCourse, 10)).get());
+
+        courseService.addQuestionToQuiz(currentQuiz.getIdQuiz(),
+                question.getAnswer1(), question.getAnswer2(),
+                question.getAnswer3(), question.getAnswer4(),
+                question.getCorrect_answer(), question.getQuest());
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/addNewQuestions";
     }
 }
