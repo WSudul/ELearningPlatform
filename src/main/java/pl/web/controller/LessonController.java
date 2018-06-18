@@ -42,6 +42,12 @@ public class LessonController {
     private MessageService messageService;
     //private StudentGradeService studentGradeService;
 
+    private StudentGradeService studentGradeService;
+
+    @Autowired
+    public void setStudentGradeService(StudentGradeService studentGradeService) {
+        this.studentGradeService = studentGradeService;
+    }
 
     public String getCurrentIdCourse() {
         return currentIdCourse;
@@ -112,7 +118,7 @@ public class LessonController {
         Optional<User> userOpt = userService.findUserByEmail(principal.getName());
         User user = userOpt.get();
         List<Access> access = accessService.findAccess(user.getId(), Long.parseLong(currentIdCourse, 10));
-        System.out.println("access:" + access.get(0).getRoleid());
+//        System.out.println("access:" + access.get(0).getRoleid());
         if (!access.isEmpty()) {
 
             currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
@@ -195,5 +201,18 @@ public class LessonController {
         model.addAttribute("currentLesson", lessonService.findLessonById(Long.parseLong(idLesson, 10)).get());
         model.addAttribute("idCourse", currentIdCourse);
         return "user/lesson";
+    }
+
+    @GetMapping("/user/checkGrades")
+    public String checkingGrades(Model model, Principal principal) {
+        List <StudentGrade> allGrades = studentGradeService.findStudentGrades(userService.findUserByEmail(principal.getName()).get().getId(),currentCourse);
+        model.addAttribute("allGrades", allGrades);
+        model.addAttribute("currentCourse", currentCourse);
+        model.addAttribute("idCourse", currentIdCourse);
+        String info="";
+        if (allGrades.isEmpty())
+            info="Jeszcze nie dostałeś/aś żadnej oceny.";
+        model.addAttribute("info", info);
+        return "user/checkGrades";
     }
 }

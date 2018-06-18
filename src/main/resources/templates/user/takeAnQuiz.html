@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <title>Quiz</title>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"></link>
+    <link rel="stylesheet" type="text/css" href="../css/styles.css"></link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">E-learning</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a th:href="@{/user/home}">Home</a></li>
+                <li><a th:href="@{/user/courses}">Kursy</a></li>
+                <li><a th:href="@{/user/contact}">Kontakt</a></li>
+                <li><a th:href="@{/user/account}">Moje konto</a></li>
+                <li><a th:href="@{/logout}"><img th:src="@{../images/wyloguj.png}" src="../images/wyloguj.png" alt="Wyloguj" style="height: 30px; width: 30px" onmouseover="this.src='../images/wyloguj2.png'" onmouseout="this.src='../images/wyloguj.png'"/></a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- First Container -->
+<div class="container-fluid bg-3 text-center">
+    <!--     <h1 th:text="${currentLesson.getName()}">Aktualna lekcja</h1>  -->
+    <!--     <p th:text="${currentLesson.getContent()}">Aktualna tresc</p> -->
+
+    <!--      <br/>  -->
+    <h1 th:text="${currentQuiz.getName()}"> Nazwa quizu</h1>
+
+    <form method="post" th:action="@{/user/takeAnQuiz}" >
+        <div class="panel panel-primary">
+
+            <div class="panel-heading text-left">
+                <span th:text="${question.getQuest()}">Nazwa</span>
+
+            </div>
+            <div class="panel-body text-left">
+
+                <div class="radio">
+                    <label><input style="height: 30px" name="answer" type="radio" value="1" checked="checked"/><span th:text="${question.getAnswer1()}"></span></label>
+                </div>
+                <div class="radio">
+                    <label><input style="height: 30px" name="answer" type="radio" value="2"/><span th:text="${question.getAnswer2()}"></span></label>
+                </div>
+                <div class="radio">
+                    <label><input style="height: 30px"  name="answer" type="radio" value="3"/><span th:text="${question.getAnswer3()}"></span></label>
+                </div>
+                <div class="radio">
+                    <label><input style="height: 30px" name="answer" type="radio" value="4"/><span th:text="${question.getAnswer4()}"></span></label>
+                </div>
+
+
+            </div>
+        </div>
+        <input type="submit" value="Wyślij odpowiedzi!" />
+
+
+    </form>
+
+
+
+    <a th:href="@{/user/allLessons(idCourse=${idCourse})}">
+        <button type="button" class="btn btn-warning">Zakończ quiz</button>
+    </a>
+
+</div>
+
+
+<!-- Footer -->
+<footer class="container-fluid bg-4 text-center">
+    <p>2017 Elearning platform</p>
+</footer>
+
+</body>
+</html>
