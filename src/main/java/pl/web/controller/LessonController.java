@@ -56,26 +56,32 @@ public class LessonController {
     public void setLessonService(LessonService lessonService) {
         this.lessonService = lessonService;
     }
+
     @Autowired
     public void setAccessService(AccessService accessService) {
         this.accessService = accessService;
     }
+
     @Autowired
     public void setRequestAccessService(RequestAccessService requestAccessService) {
         this.requestAccessService = requestAccessService;
     }
+
     @Autowired
     public void setQuizService(QuizService quizService) {
         this.quizService = quizService;
     }
+
     @Autowired
     public void setCourseGradeService(CourseGradeService courseGradeService) {
         this.courseGradeService = courseGradeService;
     }
+
     @Autowired
     public void setMessageService(MessageService messageService) {
         this.messageService = messageService;
     }
+
     /*
     @Autowired
     public void setStudentGradeService(StudentGradeService studentGradeService) {
@@ -97,13 +103,13 @@ public class LessonController {
     }
 */
     @GetMapping("/user/allLessons")
-    public String showLessonsInCourse(@RequestParam(defaultValue="1") String idCourse, Model model, Principal principal) {
+    public String showLessonsInCourse(@RequestParam(defaultValue = "1") String idCourse, Model model, Principal principal) {
         currentIdCourse = idCourse;
-        Optional<User> userOpt =userService.findUserByEmail(principal.getName());
+        Optional<User> userOpt = userService.findUserByEmail(principal.getName());
         User user = userOpt.get();
         List<Access> access = accessService.findAccess(user.getId(), Long.parseLong(currentIdCourse, 10));
-        System.out.println("access:"+access.get(0).getRoleid());
-        if(!access.isEmpty()) {
+        System.out.println("access:" + access.get(0).getRoleid());
+        if (!access.isEmpty()) {
 
             currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
         } else {
@@ -118,11 +124,11 @@ public class LessonController {
     }
 
     @GetMapping("/user/addUserToCourse")
-    public String addUserToCourse(@RequestParam(defaultValue="1") String idUser, Model model, Principal principal) {
-        User user =userService.findUserById(Long.parseLong(idUser, 10));
+    public String addUserToCourse(@RequestParam(defaultValue = "1") String idUser, Model model, Principal principal) {
+        User user = userService.findUserById(Long.parseLong(idUser, 10));
         List<Access> accesses = accessService.findAccess(user.getId(), currentCourse.getId());
-        if(accesses.isEmpty()) { //oznacza że rola to ROLE_USER - zarejestrowany uzytkownik bez specjalnych praw
-            Access access = new Access(user.getId(), ROLE_STUDENT_ID,currentCourse.getId());
+        if (accesses.isEmpty()) { //oznacza że rola to ROLE_USER - zarejestrowany uzytkownik bez specjalnych praw
+            Access access = new Access(user.getId(), ROLE_STUDENT_ID, currentCourse.getId());
             accessService.addNewAccess(access);
         } else {
             System.out.println("ROLA Z WYZSZYM DOSTEPEM");
@@ -143,17 +149,17 @@ public class LessonController {
     public String addLesson(
             @ModelAttribute @Valid Lesson lesson, Model model,
             BindingResult bindResult, Principal principal) {
-        if(bindResult.hasErrors())
+        if (bindResult.hasErrors())
             return "user/addNewLesson";
         else {
             lesson.setCourse(currentCourse);
-            System.out.println("Lekcja: nazwa :"+lesson.getName()+"zawartosc:"+lesson.getContent()+" "+lesson.getCourse().getName());
+            System.out.println("Lekcja: nazwa :" + lesson.getName() + "zawartosc:" + lesson.getContent() + " " + lesson.getCourse().getName());
             model.addAttribute("currentCourse", courseService.findCourseById(Long.parseLong(currentIdCourse, 10)));
             lessonService.addNewLessons(lesson);
             model.addAttribute("idCourse", currentIdCourse);
-            User user =userService.findUserByEmail(principal.getName()).get();
+            User user = userService.findUserByEmail(principal.getName()).get();
             List<Access> access = accessService.findAccess(user.getId(), Long.parseLong(currentIdCourse, 10));
-            if(!access.isEmpty()) {
+            if (!access.isEmpty()) {
                 currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
             } else {
                 currentAccessRole = userService.findRoleById(ROLE_USER_ID).get();
@@ -170,17 +176,18 @@ public class LessonController {
     public String addUsersToCourse(Model model) {
         List<RequestAccess> accesses = requestAccessService.findAccessWithUsers(ROLE_STUDENT_ID, Long.parseLong(currentIdCourse, 10));
         List<User> allStudentsJoiningCourse = new LinkedList<>();
-        for(RequestAccess access : accesses) {
+        for (RequestAccess access : accesses) {
             System.out.println(access.getUserid());
             allStudentsJoiningCourse.add(userService.findUserById(access.getUserid()));
         }
-        model.addAttribute("allUsers", allStudentsJoiningCourse );
+        model.addAttribute("allUsers", allStudentsJoiningCourse);
         System.out.println(currentIdCourse);
         model.addAttribute("idCourse", currentIdCourse);
         return "user/addUsersToCourse";
     }
+
     @GetMapping("/user/lesson")
-    public String showLesson(@RequestParam(defaultValue="1") String idLesson, Model model) {
+    public String showLesson(@RequestParam(defaultValue = "1") String idLesson, Model model) {
         model.addAttribute("currentLesson", lessonService.findLessonById(Long.parseLong(idLesson, 10)).get());
         model.addAttribute("idCourse", currentIdCourse);
         return "user/lesson";
