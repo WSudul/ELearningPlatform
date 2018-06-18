@@ -36,11 +36,16 @@ public class LessonController {
     private CourseService courseService;
     private LessonService lessonService;
     private AccessService accessService;
-    private QuizService quizService;
+
     private RequestAccessService requestAccessService;
     private CourseGradeService courseGradeService;
     private MessageService messageService;
     //private StudentGradeService studentGradeService;
+
+
+    public String getCurrentIdCourse() {
+        return currentIdCourse;
+    }
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -67,10 +72,7 @@ public class LessonController {
         this.requestAccessService = requestAccessService;
     }
 
-    @Autowired
-    public void setQuizService(QuizService quizService) {
-        this.quizService = quizService;
-    }
+
 
     @Autowired
     public void setCourseGradeService(CourseGradeService courseGradeService) {
@@ -105,6 +107,8 @@ public class LessonController {
     @GetMapping("/user/allLessons")
     public String showLessonsInCourse(@RequestParam(defaultValue = "1") String idCourse, Model model, Principal principal) {
         currentIdCourse = idCourse;
+
+        System.out.println(principal.getName());
         Optional<User> userOpt = userService.findUserByEmail(principal.getName());
         User user = userOpt.get();
         List<Access> access = accessService.findAccess(user.getId(), Long.parseLong(currentIdCourse, 10));
