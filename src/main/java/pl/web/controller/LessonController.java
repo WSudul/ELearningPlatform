@@ -96,21 +96,19 @@ public class LessonController {
     public void setStudentGradeService(StudentGradeService studentGradeService) {
         this.studentGradeService = studentGradeService;
     } */
-    /*
+
     @GetMapping("/user/promoteToTeacher")
     public String promoteUserToTeacher(@RequestParam(defaultValue="1") String idUser, Model model) {
         User user = userService.findUserById(Long.parseLong(idUser, 10));
         userService.deleteUserByID(Long.parseLong(idUser, 10));
         user.getRoles().clear();
-//		Set<UserRole> userRole = new TreeSet<>();
-//		userRole.add(userService.findRoleById(202L));
-//		user.setRoles(userRole);
+
         userService.addWithTeacherRole(user);
         List <User> allUsers = userService.findAllUser();
         model.addAttribute("allUsers", allUsers);
         return "user/home";
     }
-*/
+
     @GetMapping("/user/allLessons")
     public String showLessonsInCourse(@RequestParam(defaultValue = "1") String idCourse, Model model, Principal principal) {
         currentIdCourse = idCourse;

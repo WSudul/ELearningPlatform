@@ -49,6 +49,16 @@ public class UserService {
 
     }
 
+    public void deleteUserByID(Long idUser) {
+        userRepository.deleteById(idUser);
+    }
+
+    public void addWithTeacherRole(User user) {
+        UserRole defaultRole = roleRepository.findByRole(TEACHER_ROLE).get();
+        user.getRoles().add(defaultRole);
+        userRepository.save(user);
+    }
+
     public List<User> findAllUser() {
         return userRepository.findAll();
     }
