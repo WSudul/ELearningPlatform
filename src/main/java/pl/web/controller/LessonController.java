@@ -215,4 +215,14 @@ public class LessonController {
         model.addAttribute("info", info);
         return "user/checkGrades";
     }
+
+    @GetMapping("/user/statistics")
+    public String statistics(Model model, Principal principal) {
+        List<Access> accesses = accessService.findAccessWithUsers(ROLE_STUDENT_ID, Long.parseLong(currentIdCourse, 10));
+        model.addAttribute("numberOfLessons", currentCourse.getLessons().size());
+        model.addAttribute("numberOfQuizes", currentCourse.getQuizes().size());
+        model.addAttribute("idCourse", currentIdCourse);
+        model.addAttribute("numberOfStudents", accesses.size());
+        return "user/statistics";
+    }
 }

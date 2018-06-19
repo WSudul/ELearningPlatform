@@ -404,7 +404,7 @@ public class CourseService {
         question.setQuiz(optionalQuiz.get());
 
         try {
-            quizRepository.save(optionalQuiz.get());
+           // quizRepository.save(optionalQuiz.get());
             questionRepository.save(question);
 
         } catch (DataAccessException exception) {
