@@ -30,6 +30,7 @@ public class LessonController {
     private List<String> answers = new ArrayList<>();
     private String studentEmail;
     private final long ROLE_USER_ID = 1;
+    private final long ROLE_TEACHER_ID = 2;
     private final long ROLE_STUDENT_ID = 4;
 
     private UserService userService;
@@ -224,5 +225,87 @@ public class LessonController {
         model.addAttribute("idCourse", currentIdCourse);
         model.addAttribute("numberOfStudents", accesses.size());
         return "user/statistics";
+    }
+
+    @GetMapping("/user/sendMessage")
+    public String sendMessage(Model model) {
+        model.addAttribute("message", new Message());
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/sendMessage";
+    }
+
+    @PostMapping("/user/sendMessage")
+    public String sendMessage(@ModelAttribute Message message, Model model,BindingResult bindResult, Principal principal) {
+        if(bindResult.hasErrors()) {
+            return "user/sendUser";
+        }
+        List<Access> accesses = accessService.findAccessWithUsers(ROLE_TEACHER_ID, Long.parseLong(currentIdCourse, 10));
+        //userService.findUserById(accesses.get(0).getUserid()).getEmail();
+        String teacherEmail = userService.findUserById(accesses.get(0).getUserid()).getEmail();
+        System.out.println("email nauczyciela " + teacherEmail+ " " + message.getTitle());
+        message.setTo(teacherEmail);
+        message.setFrom(principal.getName());
+        messageService.sendMessage(message);
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/sendMessage";
+    }
+
+    @GetMapping("/user/receiveMessageStudent")
+    public String receiveMessageStudent(Model model, Principal principal) {
+        List<Message> allMessages=messageService.findAllMessages(principal.getName());
+        model.addAttribute("allMessages", allMessages);
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/receiveMessageStudent";
+    }
+
+    @GetMapping("/user/displayMessageStudent")
+    public String displayMessageStudent(@RequestParam(defaultValue="1") String idMessage, Model model, Principal principal) {
+        System.out.println(idMessage);
+        model.addAttribute("idCourse", currentIdCourse);
+        Message msg=messageService.findMessageById(Long.parseLong(idMessage, 10)).get();
+        model.addAttribute("message", msg);
+        studentEmail = msg.getFrom();
+        return "user/displayMessageStudent";
+    }
+
+    @GetMapping("/user/sendMessageToStudent")
+    public String sendMessageToStudent(Model model) {
+        model.addAttribute("message", new Message());
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/sendMessageToStudent";
+    }
+
+    @PostMapping("/user/sendMessageToStudent")
+    public String sendMessageToStudent(@ModelAttribute Message message, Model model,BindingResult bindResult, Principal principal) {
+        if(bindResult.hasErrors()) {
+            return "user/sendUser";
+        }
+        List<Access> accesses = accessService.findAccessWithUsers(ROLE_TEACHER_ID, Long.parseLong(currentIdCourse, 10));
+        //userService.findUserById(accesses.get(0).getUserid()).getEmail();
+        String teacherEmail = userService.findUserById(accesses.get(0).getUserid()).getEmail();
+        System.out.println("email nauczyciela " + teacherEmail+ " " + message.getTitle());
+        message.setTo(studentEmail); // ZMIENIC
+        message.setFrom(teacherEmail);
+        messageService.sendMessage(message);
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/sendMessageToStudent";
+    }
+
+    @GetMapping("/user/receiveMessage")
+    public String receiveMessage(Model model, Principal principal) {
+        List<Message> allMessages=messageService.findAllMessages(principal.getName());
+        model.addAttribute("allMessages", allMessages);
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/receiveMessage";
+    }
+
+    @GetMapping("/user/displayMessage")
+    public String displayMessage(@RequestParam(defaultValue="1") String idMessage, Model model, Principal principal) {
+        System.out.println(idMessage);
+        model.addAttribute("idCourse", currentIdCourse);
+        Message msg=messageService.findMessageById(Long.parseLong(idMessage, 10)).get();
+        model.addAttribute("message", msg);
+        studentEmail = msg.getFrom();
+        return "user/displayMessage";
     }
 }
