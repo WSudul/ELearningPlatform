@@ -308,4 +308,37 @@ public class LessonController {
         studentEmail = msg.getFrom();
         return "user/displayMessage";
     }
+
+    @GetMapping("/user/rateTheCourse")
+    public String rateTheCourse(@RequestParam(defaultValue="1") String idCourse,@RequestParam(defaultValue="1") String grade,
+                                Model model, Principal principal) {
+        // SPRAWDZENIE CZY UZYTKOWNIK JEST W KURSIE JAKO STUDENT JESLI TAK TO MOZE WSTAWIC OCENE
+        User user =userService.findUserByEmail(principal.getName()).get();
+        List<Access> access = accessService.findAccess(user.getId(), Long.parseLong(idCourse, 10));
+        if(!access.isEmpty()) {
+
+            currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
+            System.out.println(currentAccessRole.getRole());
+            //System.out.println(currentAccessRole.getRole());
+            if(currentAccessRole.getRole().equals("ROLE_STUDENT")) {
+                List<CourseGrade> courseGradeByUser = courseGradeService.findIfYouRatedCourse(userService.
+                        findUserByEmail(principal.getName()).get().getId(),
+                        courseService.findCourseById(Long.parseLong(idCourse, 10)).get());//prinicpal i subject znaleźć
+                if(courseGradeByUser.isEmpty()) {
+                    //Wstawienie oceny
+                    CourseGrade courseGrade = new CourseGrade(userService.findUserByEmail(principal.getName()).get().getId(),
+                            Integer.parseInt(grade),courseService.findCourseById(Long.parseLong(idCourse, 10)).get());
+                    courseGradeService.addNewCourseGrade(courseGrade);
+                }
+            }
+        } else {
+            currentAccessRole = userService.findRoleById(ROLE_USER_ID).get();
+            //System.out.println(currentAccessRole.getRole());
+        }
+
+        List<Course> allCourses = courseService.findAllCourses();
+        model.addAttribute("courseGradeService", courseGradeService);
+        model.addAttribute("allCourses", allCourses);
+        return "user/Courses";
+    }
 }
