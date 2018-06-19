@@ -309,36 +309,50 @@ public class LessonController {
         return "user/displayMessage";
     }
 
-    @GetMapping("/user/rateTheCourse")
-    public String rateTheCourse(@RequestParam(defaultValue="1") String idCourse,@RequestParam(defaultValue="1") String grade,
-                                Model model, Principal principal) {
-        // SPRAWDZENIE CZY UZYTKOWNIK JEST W KURSIE JAKO STUDENT JESLI TAK TO MOZE WSTAWIC OCENE
-        User user =userService.findUserByEmail(principal.getName()).get();
-        List<Access> access = accessService.findAccess(user.getId(), Long.parseLong(idCourse, 10));
-        if(!access.isEmpty()) {
-
-            currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
-            System.out.println(currentAccessRole.getRole());
-            //System.out.println(currentAccessRole.getRole());
-            if(currentAccessRole.getRole().equals("ROLE_STUDENT")) {
-                List<CourseGrade> courseGradeByUser = courseGradeService.findIfYouRatedCourse(userService.
-                        findUserByEmail(principal.getName()).get().getId(),
-                        courseService.findCourseById(Long.parseLong(idCourse, 10)).get());//prinicpal i subject znaleźć
-                if(courseGradeByUser.isEmpty()) {
-                    //Wstawienie oceny
-                    CourseGrade courseGrade = new CourseGrade(userService.findUserByEmail(principal.getName()).get().getId(),
-                            Integer.parseInt(grade),courseService.findCourseById(Long.parseLong(idCourse, 10)).get());
-                    courseGradeService.addNewCourseGrade(courseGrade);
-                }
-            }
-        } else {
-            currentAccessRole = userService.findRoleById(ROLE_USER_ID).get();
-            //System.out.println(currentAccessRole.getRole());
+    @GetMapping("/user/insertGrade")
+    public String insertingGrades(Model model, Principal principal) {
+        List<Access> accesses = accessService.findAccessWithUsers(ROLE_STUDENT_ID, Long.parseLong(currentIdCourse, 10));
+        List<User> allStudentsInCourse = new LinkedList<>();
+        for(Access access : accesses) {
+            //METODA
+            allStudentsInCourse.add(userService.findUserById(access.getUserid()));
         }
 
-        List<Course> allCourses = courseService.findAllCourses();
-        model.addAttribute("courseGradeService", courseGradeService);
-        model.addAttribute("allCourses", allCourses);
-        return "user/Courses";
+        model.addAttribute("studentGradeService", studentGradeService);
+        model.addAttribute("currentCourse", currentCourse);
+        model.addAttribute("allUsers", allStudentsInCourse );
+        model.addAttribute("studentGrade", new StudentGrade());
+        model.addAttribute("idCourse", currentIdCourse);
+
+        return "user/insertGrade";
     }
+
+    @PostMapping("/user/insertGrade")
+    public String insertingGradesToDatabase(@RequestParam(defaultValue="1") String idUser, @ModelAttribute StudentGrade studentGrade, Model model, Principal principal, BindingResult bindResult) {
+        List<Access> accesses = accessService.findAccessWithUsers(ROLE_STUDENT_ID, Long.parseLong(currentIdCourse, 10));
+        List<User> allStudentsInCourse = new LinkedList<>();
+        for(Access access : accesses) {
+            //METODA
+            allStudentsInCourse.add(userService.findUserById(access.getUserid()));
+        }
+        model.addAttribute("studentGradeService", studentGradeService);
+        model.addAttribute("currentCourse", currentCourse);
+        model.addAttribute("allUsers", allStudentsInCourse );
+        model.addAttribute("idCourse", currentIdCourse);
+        model.addAttribute("studentGrade", new StudentGrade());
+        if (studentGrade.getGrade()==null)
+            return "user/insertGrade";
+        if(bindResult.hasErrors() || (studentGrade.getGrade()!=2 && studentGrade.getGrade()!=3 && studentGrade.getGrade()!=3.5 && studentGrade.getGrade()!=4 && studentGrade.getGrade()!=4.5 && studentGrade.getGrade()!=5)) {
+            System.out.println("blad");
+            return "user/insertGradeError";
+        }
+
+        studentGrade.setCourse(currentCourse);
+        studentGrade.setUserid(Long.parseLong(idUser, 10));
+
+        studentGradeService.addNewStudentGrade(studentGrade);
+        System.out.println(userService.findUserByEmail(principal.getName()).get().getId());
+        return "user/insertGrade";
+    }
+
 }
