@@ -18,7 +18,7 @@ public interface AccessRepository extends JpaRepository<Access, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Access SET roleid = 201 WHERE idaccess = ?1")
+    @Query("UPDATE Access SET roleid = 1 WHERE idaccess = ?1")
     public void removeUserFromSubject(Long idaccess);
 
 }

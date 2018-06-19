@@ -108,13 +108,15 @@ public class CourseController {
         return "user/allCourses";
     }
 
-    /*@GetMapping("/user/manageUsers")
+    @GetMapping("/user/manageUsers")
     public String manageUsers(Model model) {
         List<User> allUsers = userService.findAllUser();
         model.addAttribute("allUsers", allUsers);
 
         return "user/manageUsers";
-    }*/
+    }
+
+
 
     /*@GetMapping("/user/deleteUser")
     public String removeUser(@RequestParam(defaultValue="1") String idUser, Model model) {

@@ -8,6 +8,7 @@ import pl.model.UserRole;
 import pl.repository.UserRepository;
 import pl.repository.UserRoleRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,6 +47,10 @@ public class UserService {
     public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
 
+    }
+
+    public List<User> findAllUser() {
+        return userRepository.findAll();
     }
 
     public Optional<UserRole> findRoleById(Long id) {

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+  <title>Zarządzaj użytkownikami</title>
+  <meta charset="utf-8"></meta>
+  <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"></link>
+  <link rel="stylesheet" type="text/css" href="../css/styles.css"></link>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">E-learning</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a th:href="@{/user/home}">Home</a></li>
+        <li><a th:href="@{/user/courses}">Kursy</a></li>
+        <li><a th:href="@{/user/contact}">Kontakt</a></li>
+        <li><a th:href="@{/user/account}">Moje konto</a></li>
+        <li><a th:href="@{/}"><img th:src="@{../images/wyloguj.png}" src="../images/wyloguj.png" alt="Wyloguj" style="height: 30px; width: 30px" onmouseover="this.src='../images/wyloguj2.png'" onmouseout="this.src='../images/wyloguj.png'"/></a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- First Container -->
+<div class="container-fluid bg-3 text-center">   
+ <h3 class="margin">Użytkownicy:</h3><br/>
+ <table style="width: 90%">
+  <tr class="panel panel-primary" th:each="user: ${allUsers}" th:object="${user}">
+   		   	<td th:text="*{firstName}"></td>
+   			<td th:text="*{lastName}"></td>
+   			<td th:text="*{email}"></td>
+			<td><a th:href="@{/user/promoteToTeacher(idUser=${user.getId()})}">
+   				<button type="button" class="btn btn-info">Nadaj status nauczyciela</button>
+   			</a></td>
+			<td><a th:href="@{/user/deleteUser(idUser=${user.getId()})}">
+   				<button type="button" class="btn btn-danger">Usuń użytkownika</button>
+   			</a></td>
+   </tr>
+   </table><br/>
+   
+<a th:href="@{/user/courses}">
+   		<button type="button" class="btn btn-warning">Powrót</button>
+   	</a>
+ 
+</div>
+
+
+<!-- Footer -->
+<footer class="container-fluid bg-4 text-center">
+  <p>2017 Elearning platform</p> 
+</footer>
+
+</body>
+</html>

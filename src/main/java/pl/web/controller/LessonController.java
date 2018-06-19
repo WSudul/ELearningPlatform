@@ -119,7 +119,6 @@ public class LessonController {
         Optional<User> userOpt = userService.findUserByEmail(principal.getName());
         User user = userOpt.get();
         List<Access> access = accessService.findAccess(user.getId(), Long.parseLong(currentIdCourse, 10));
-//        System.out.println("access:" + access.get(0).getRoleid());
         if (!access.isEmpty()) {
 
             currentAccessRole = userService.findRoleById(access.get(0).getRoleid()).get();
@@ -240,7 +239,6 @@ public class LessonController {
             return "user/sendUser";
         }
         List<Access> accesses = accessService.findAccessWithUsers(ROLE_TEACHER_ID, Long.parseLong(currentIdCourse, 10));
-        //userService.findUserById(accesses.get(0).getUserid()).getEmail();
         String teacherEmail = userService.findUserById(accesses.get(0).getUserid()).getEmail();
         System.out.println("email nauczyciela " + teacherEmail+ " " + message.getTitle());
         message.setTo(teacherEmail);
@@ -281,7 +279,6 @@ public class LessonController {
             return "user/sendUser";
         }
         List<Access> accesses = accessService.findAccessWithUsers(ROLE_TEACHER_ID, Long.parseLong(currentIdCourse, 10));
-        //userService.findUserById(accesses.get(0).getUserid()).getEmail();
         String teacherEmail = userService.findUserById(accesses.get(0).getUserid()).getEmail();
         System.out.println("email nauczyciela " + teacherEmail+ " " + message.getTitle());
         message.setTo(studentEmail); // ZMIENIC
@@ -314,7 +311,6 @@ public class LessonController {
         List<Access> accesses = accessService.findAccessWithUsers(ROLE_STUDENT_ID, Long.parseLong(currentIdCourse, 10));
         List<User> allStudentsInCourse = new LinkedList<>();
         for(Access access : accesses) {
-            //METODA
             allStudentsInCourse.add(userService.findUserById(access.getUserid()));
         }
 
@@ -332,7 +328,6 @@ public class LessonController {
         List<Access> accesses = accessService.findAccessWithUsers(ROLE_STUDENT_ID, Long.parseLong(currentIdCourse, 10));
         List<User> allStudentsInCourse = new LinkedList<>();
         for(Access access : accesses) {
-            //METODA
             allStudentsInCourse.add(userService.findUserById(access.getUserid()));
         }
         model.addAttribute("studentGradeService", studentGradeService);
@@ -353,6 +348,29 @@ public class LessonController {
         studentGradeService.addNewStudentGrade(studentGrade);
         System.out.println(userService.findUserByEmail(principal.getName()).get().getId());
         return "user/insertGrade";
+    }
+
+    @GetMapping("/user/usersOfCourse")
+    public String manageUsersInCourse(Model model) {
+        List<Access> accesses = accessService.findAccessWithUsers(ROLE_STUDENT_ID, Long.parseLong(currentIdCourse, 10));
+        List<User> allStudentsInCourse = new LinkedList<>();
+        for(Access access : accesses) {
+            allStudentsInCourse.add(userService.findUserById(access.getUserid()));
+        }
+        model.addAttribute("allUsers", allStudentsInCourse );
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/usersOfCourse";
+    }
+
+    @GetMapping("/user/removeUserFromCourse")
+    public String removeUser(@RequestParam(defaultValue="1") String idUser, Model model) {
+        List<Access> accesses = accessService.findAccess(Long.parseLong(idUser, 10), Long.parseLong(currentIdCourse, 10));
+        if(!accesses.isEmpty()) {
+            accessService.removeUserFromSubject(accesses.get(0).getIdaccess());
+        }
+
+        model.addAttribute("idCourse", currentIdCourse);
+        return "user/usersOfCourse";
     }
 
 }
